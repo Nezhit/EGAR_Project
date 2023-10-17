@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org"
+      xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+Успешная авторизация
+<p>Имя пользователя: <span th:text="${user.get().username}"></span></p>
+<p>Email: <span th:text="${user.get().email}"></span></p>
+<p>Роль: <span th:text="${user.get().roles.iterator().next().name}"></span></p>
+<button onclick="account()">go</button>
+<script>
+
+        function account(){
+        var xhr = new XMLHttpRequest();
+        var url = "/test"; // Замените это на ваш URL-адрес запроса
+        xhr.open("GET", url, true);
+        xhr.setRequestHeader("Authorization", "Bearer "+localStorage.getItem("token")); // Установите заголовок авторизации Bearer
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState == 4 && xhr.status == 200) {
+                var response = xhr.responseText;
+                // Обработайте ответ от сервера здесь
+            }
+        };
+        xhr.send();
+        }
+
+    </script>
+</body>
+</html>
