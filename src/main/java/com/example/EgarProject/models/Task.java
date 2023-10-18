@@ -19,8 +19,13 @@ public class Task {
     private LocalDateTime ended;
 
     @ManyToOne
-    @JoinColumn(name = "conditions")
+    @JoinColumn(name = "condition")
     private TaskCon taskCon;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinTable(name="task_conditions",
+            joinColumns = @JoinColumn(name="user_id"),
+            inverseJoinColumns = @JoinColumn(name="role_id"))
+    private User user;
     @PrePersist
     protected void onCreate() {
         created = LocalDateTime.now();

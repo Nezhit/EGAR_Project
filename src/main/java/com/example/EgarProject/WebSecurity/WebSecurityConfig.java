@@ -53,13 +53,7 @@ public class WebSecurityConfig  {
         return daoAuthenticationProvider;
     }
 
-/*
-    public WebSecurityConfig(UserDetailsServiceImpl userDetailsService, AuthenticationProvider authenticationProvider) {
-        this.userDetailsService = userDetailsService;
-        this.authenticationProvider = authenticationProvider;
-    }
 
- */
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -80,9 +74,18 @@ public class WebSecurityConfig  {
                         .requestMatchers("/api/auth/signup").permitAll()
                         .requestMatchers("/", "/home","/uno").permitAll()
                         .anyRequest().authenticated()
-                )
 
+                )
+                .formLogin(formLogin -> formLogin
+                        .loginPage("/login") // Указываем URL страницы входа
+                        .permitAll() // Разрешаем всем доступ к странице входа
+
+                )
+                .exceptionHandling(exceptionHandling -> exceptionHandling
+                        .authenticationEntryPoint(unauthorizedHandler) // Устанавливаем кастомный AuthenticationEntryPoint
+                )
                 .addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
+
         return http.build();
     }
 
@@ -101,27 +104,5 @@ public class WebSecurityConfig  {
 
         return new InMemoryUserDetailsManager(user);
     }
-    /*
-    @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http
-                .csrf(AbstractHttpConfigurer::disable)
-                .cors(AbstractHttpConfigurer::disable)
-                .formLogin((form) -> form
-                        .loginPage("/login")
-                        .permitAll())
-                .authorizeHttpRequests(req->req.requestMatchers("/api/v1/management/**").permitAll()
-                        .requestMatchers("/", "/home","/uno").permitAll()
 
-
-
-
-                .anyRequest().authenticated());
-
-
-        //http.addFilterBefore(authenticationJwtTokenFilter, UsernamePasswordAuthenticationFilter.class);
-
-        return http.build();
-    }
-     */
 }
