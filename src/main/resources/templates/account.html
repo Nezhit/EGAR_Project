@@ -11,6 +11,18 @@
 <p>Имя пользователя: <span th:text="${user.get().username}"></span></p>
 <p>Email: <span th:text="${user.get().email}"></span></p>
 <p>Роль: <span th:text="${user.get().roles.iterator().next().name}"></span></p>
+<p>Ваши задачи:</p>
+<div th:each="task :${tasks}">
+
+        <div >
+            <span th:text="${task.getTask().getDescription}"></span>
+            <span th:text="${task.getChangeText()}"></span>
+            <span th:text="${task.getChangeTime()}"></span>
+            <span th:text="${task.getUser().getUsername}"></span>
+
+        </div>
+
+</div>
 <button onclick="account()">go</button>
 <script>
 

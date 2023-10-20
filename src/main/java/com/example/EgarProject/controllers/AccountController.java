@@ -27,7 +27,11 @@ public class AccountController {
        Optional<User> user=  userInfo.getInfo( request);
         model.addAttribute("user",user);
         List<ChangeJournal> tasks= userInfo.getUserTasksByUsername(request);
-        System.out.println("infa   "+tasks);
+        model.addAttribute("tasks",tasks);
+        System.out.println("ДЛЯ ФРОНТА! " +tasks.stream().iterator().next().getChangeTime());
+
+        tasks.forEach(task -> System.out.println("INFORMATION "+task.getUser().getUsername()+" "+task.getTask().getDescription()+" "+task.getTask().getTaskCon()+" "+task.getChangeText()+" "+task.getChangeTime()));
+        tasks.forEach(taskk->taskk.getTask().getTaskCon().forEach(taskcon -> System.out.println(taskcon.getCondition() ) ));
         return "account";
     }
     @GetMapping("/test")

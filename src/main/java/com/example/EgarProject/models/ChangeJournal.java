@@ -2,6 +2,8 @@ package com.example.EgarProject.models;
 
 import jakarta.persistence.*;
 
+import java.sql.Time;
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 
 @Entity
