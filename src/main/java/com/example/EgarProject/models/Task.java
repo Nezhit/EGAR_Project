@@ -3,6 +3,8 @@ package com.example.EgarProject.models;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "tasks")
@@ -18,14 +20,15 @@ public class Task {
     @Column(name = "ended")
     private LocalDateTime ended;
 
-    @ManyToOne
-    @JoinColumn(name = "condition")
-    private TaskCon taskCon;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinTable(name="task_conditions",
-            joinColumns = @JoinColumn(name="user_id"),
-            inverseJoinColumns = @JoinColumn(name="role_id"))
-    private User user;
+    @ManyToMany
+    @JoinTable(
+            name = "task_conditions", // Имя промежуточной таблицы
+            joinColumns = @JoinColumn(name = "task_id"), // Имя столбца с внешним ключом в таблице task_conditions
+            inverseJoinColumns = @JoinColumn(name = "condition_id") // Имя столбца с внешним ключом в таблице task_conditions
+    )
+    private Set<TaskCon> taskCons = new HashSet<>();
+    @OneToMany(mappedBy = "task", cascade = CascadeType.ALL)
+    private Set<ChangeJournal> changes = new HashSet<>();
     @PrePersist
     protected void onCreate() {
         created = LocalDateTime.now();
@@ -34,11 +37,11 @@ public class Task {
     public Task() {
     }
 
-    public Task(String description, LocalDateTime created, LocalDateTime ended, TaskCon taskCon) {
+    public Task(String description, LocalDateTime created, LocalDateTime ended) {
         this.description = description;
         this.created = created;
         this.ended = ended;
-        this.taskCon = taskCon;
+
     }
 
     public String getDescription() {
@@ -65,11 +68,11 @@ public class Task {
         this.ended = ended;
     }
 
-    public TaskCon getTaskCon() {
-        return taskCon;
+    public Set<TaskCon> getTaskCon() {
+        return taskCons;
     }
 
-    public void setTaskCon(TaskCon taskCon) {
-        this.taskCon = taskCon;
+    public void setTaskCon(Set<TaskCon> taskCon) {
+        this.taskCons = taskCon;
     }
 }

@@ -1,5 +1,7 @@
 package com.example.EgarProject.controllers;
 
+import com.example.EgarProject.models.ChangeJournal;
+import com.example.EgarProject.models.Task;
 import com.example.EgarProject.models.User;
 import com.example.EgarProject.services.UserInfo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +26,8 @@ public class AccountController {
     public String userAccess(HttpServletRequest request,Model model ) {
        Optional<User> user=  userInfo.getInfo( request);
         model.addAttribute("user",user);
-       // System.out.println("infa   "+userInfo.getInfo(username));
+        List<ChangeJournal> tasks= userInfo.getUserTasksByUsername(request);
+        System.out.println("infa   "+tasks);
         return "account";
     }
     @GetMapping("/test")

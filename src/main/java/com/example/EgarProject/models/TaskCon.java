@@ -11,7 +11,7 @@ public class TaskCon {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Enumerated(EnumType.STRING)
-    @Column(length = 20)
+    @Column(name = "condition", length = 20)
     private ETaskCon condition;
 
     public TaskCon() {
