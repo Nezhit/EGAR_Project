@@ -5,14 +5,37 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+    <style>
+
+            .droppable {
+    width: calc(23% - 20px); /* 25% ширины экрана с учетом отступов */
+    height: 100vh;
+    float: left;
+    border: 2px dashed gray;
+    margin: 10px;
+    padding: 10px;
+    overflow-y: visible;
+}
+
+
+
+    .draggable {
+        margin: 10px;
+        padding: 10px;
+        background-color: lightgray;
+        cursor: move;
+    }
+
+    </style>
 </head>
 <body>
 Успешная авторизация
 <p>Имя пользователя: <span th:text="${user.get().username}"></span></p>
 <p>Email: <span th:text="${user.get().email}"></span></p>
 <p>Роль: <span th:text="${user.get().roles.iterator().next().name}"></span></p>
+<p><a href="/main">На главную страницу</a></p>
 <p>Ваши задачи:</p>
-<div th:each="task :${tasks}">
+<div th:each="task :${tasks}" class="draggable" id="drag" draggable="true">
 
         <div >
             <span th:text="${task.getTask().getDescription}"></span>
@@ -27,12 +50,54 @@
         </div>
 
 </div>
+<div class="droppable" id="section1"></div>
+<div class="droppable" id="section2"></div>
+<div class="droppable" id="section3"></div>
+<div class="droppable" id="section4"></div>
 
-<a href="/main">На главную страницу</a>
+
 <script>
 
+document.addEventListener("DOMContentLoaded", function () {
+    var draggedItem = null;
+
+    // Начало перетаскивания
+    document.addEventListener("dragstart", function (event) {
+        draggedItem = event.target;
+        event.target.style.opacity = 0.5;
+    });
+
+    // Перетаскивание внутри секции
+    document.addEventListener("dragover", function (event) {
+        event.preventDefault();
+    });
+
+    // Перетаскивание элемента в секцию
+    document.addEventListener("dragenter", function (event) {
+        if (event.target.classList.contains("droppable")) {
+            event.target.style.border = "2px solid green";
+        }
+    });
+
+    // Выход элемента из секции
+    document.addEventListener("dragleave", function (event) {
+        if (event.target.classList.contains("droppable")) {
+            event.target.style.border = "2px dashed gray";
+        }
+    });
+
+    // Перемещение элемента внутрь секции
+    document.addEventListener("drop", function (event) {
+        event.preventDefault();
+        if (event.target.classList.contains("droppable")) {
+            event.target.appendChild(draggedItem);
+            event.target.style.border = "2px dashed gray";
+        }
+        draggedItem.style.opacity = 1;
+    });
+});
 
 
-    </script>
+</script>
 </body>
 </html>
