@@ -5,28 +5,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
-    <style>
-
-            .droppable {
-    width: calc(23% - 20px); /* 25% ширины экрана с учетом отступов */
-    height: 100vh;
-    float: left;
-    border: 2px dashed gray;
-    margin: 10px;
-    padding: 10px;
-    overflow-y: visible;
-}
-
-
-
-    .draggable {
-        margin: 10px;
-        padding: 10px;
-        background-color: lightgray;
-        cursor: move;
-    }
-
-    </style>
+    <link rel="stylesheet" type="text/css" href="/my.css">
 </head>
 <body>
 Успешная авторизация
@@ -55,11 +34,21 @@
 <div class="droppable" id="section3"></div>
 <div class="droppable" id="section4"></div>
 
+<!-- Всплывающее окно -->
+<div id="myModal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <p>Id секции: <span id="sectionId"></span></p>
+        <input type="text" id="textInput" placeholder="Введите текст">
+        <button id="submitButton">Отправить</button>
+    </div>
+</div>
 
 <script>
 
 document.addEventListener("DOMContentLoaded", function () {
     var draggedItem = null;
+
 
     // Начало перетаскивания
     document.addEventListener("dragstart", function (event) {
