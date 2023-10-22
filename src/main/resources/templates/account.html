@@ -19,26 +19,19 @@
             <span th:text="${task.getChangeText()}"></span>
             <span th:text="${task.getChangeTime()}"></span>
             <span th:text="${task.getUser().getUsername}"></span>
+            <div th:each="taskCon :${task.getTask().getTaskCon()}">
+                <span th:text="${taskCon.getCondition()}"></span>
+
+            </div>
 
         </div>
 
 </div>
-<button onclick="account()">go</button>
+
+<a href="/main">На главную страницу</a>
 <script>
 
-        function account(){
-        var xhr = new XMLHttpRequest();
-        var url = "/test"; // Замените это на ваш URL-адрес запроса
-        xhr.open("GET", url, true);
-        xhr.setRequestHeader("Authorization", "Bearer "+localStorage.getItem("token")); // Установите заголовок авторизации Bearer
-        xhr.onreadystatechange = function () {
-            if (xhr.readyState == 4 && xhr.status == 200) {
-                var response = xhr.responseText;
-                // Обработайте ответ от сервера здесь
-            }
-        };
-        xhr.send();
-        }
+
 
     </script>
 </body>
