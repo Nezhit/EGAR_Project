@@ -12,6 +12,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.web.bind.annotation.PostMapping;
 
 import java.util.List;
 import java.util.Optional;
@@ -32,6 +33,15 @@ public class AccountController {
         //tasks.forEach(task->task.getTask().getTaskCon().forEach(con->con.g));
         tasks.forEach(task -> System.out.println("INFORMATION "+task.getUser().getUsername()+" "+task.getTask().getDescription()+" "+task.getTask().getTaskCon()+" "+task.getChangeText()+" "+task.getChangeTime()));
         tasks.forEach(taskk->taskk.getTask().getTaskCon().forEach(taskcon -> System.out.println(taskcon.getCondition() ) ));
+        return "account";
+    }
+    @PostMapping("/account")
+    @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
+    public String changeCon(HttpServletRequest request,Model model){
+        Optional<User> user=  userInfo.getInfo( request);
+        model.addAttribute("user",user);
+        List<ChangeJournal> tasks= userInfo.getUserTasksByUsername(request);
+        model.addAttribute("tasks",tasks);
         return "account";
     }
     @GetMapping("/test")

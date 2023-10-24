@@ -9,18 +9,18 @@
 </head>
 <body>
 Успешная авторизация
-<p>Имя пользователя: <span th:text="${user.get().username}"></span></p>
+<p>Имя пользователя: <span th:text="${user.get().getUsername()}"></span></p>
 <p>Email: <span th:text="${user.get().email}"></span></p>
 <p>Роль: <span th:text="${user.get().roles.iterator().next().name}"></span></p>
 <p><a href="/main">На главную страницу</a></p>
 <p>Ваши задачи:</p>
-<div th:each="task :${tasks}" class="draggable" id="drag" draggable="true">
+<div th:each="task :${tasks}" class="draggable" id="drag" draggable="true" data-taskid="${task.getId()}">
 
         <div >
             <span th:text="${task.getTask().getDescription}"></span>
             <span th:text="${task.getChangeText()}"></span>
             <span th:text="${task.getChangeTime()}"></span>
-            <span th:text="${task.getUser().getUsername}"></span>
+            <span th:text="${task.getUser().getUsername()}"></span>
             <div th:each="taskCon :${task.getTask().getTaskCon()}">
                 <span th:text="${taskCon.getCondition()}"></span>
 
@@ -29,10 +29,10 @@
         </div>
 
 </div>
-<div class="droppable" id="section1"></div>
-<div class="droppable" id="section2"></div>
-<div class="droppable" id="section3"></div>
-<div class="droppable" id="section4"></div>
+<div class="droppable" id="section1" data-sectionid="section1"></div>
+<div class="droppable" id="section2" data-sectionid="section2"></div>
+<div class="droppable" id="section3" data-sectionid="section3"></div>
+<div class="droppable" id="section4" data-sectionid="section4"></div>
 
 <!-- Всплывающее окно -->
 <div id="myModal" class="modal">
@@ -45,10 +45,12 @@
 </div>
 
 <script>
-
 document.addEventListener("DOMContentLoaded", function () {
     var draggedItem = null;
-
+    var modal = document.getElementById("myModal");
+    var submitButton = document.getElementById("submitButton");
+    var sectionIdSpan = document.getElementById("sectionId");
+    var textInput = document.getElementById("textInput");
 
     // Начало перетаскивания
     document.addEventListener("dragstart", function (event) {
@@ -61,31 +63,87 @@ document.addEventListener("DOMContentLoaded", function () {
         event.preventDefault();
     });
 
-    // Перетаскивание элемента в секцию
-    document.addEventListener("dragenter", function (event) {
-        if (event.target.classList.contains("droppable")) {
-            event.target.style.border = "2px solid green";
-        }
-    });
-
-    // Выход элемента из секции
-    document.addEventListener("dragleave", function (event) {
-        if (event.target.classList.contains("droppable")) {
-            event.target.style.border = "2px dashed gray";
-        }
-    });
-
     // Перемещение элемента внутрь секции
     document.addEventListener("drop", function (event) {
         event.preventDefault();
         if (event.target.classList.contains("droppable")) {
-            event.target.appendChild(draggedItem);
-            event.target.style.border = "2px dashed gray";
+            var taskId = draggedItem.getAttribute("data-taskid");
+            var sectionId = event.target.getAttribute("data-sectionid");
+
+            // Показать всплывающее окно
+            modal.style.display = "block";
+            sectionIdSpan.textContent = sectionId;
+
+            // Обработчик кнопки отправки
+            submitButton.onclick = function() {
+                // Чтение токена из cookie
+                var accessToken = getCookie("Authorization");
+                var inputValue = textInput.value;
+                // Отправить AJAX запрос с данными taskId, sectionId и inputValue
+
+                var xhr = new XMLHttpRequest();
+
+                // Устанавливаем метод запроса и URL-адрес сервера
+                xhr.open("POST", "/account", true);
+
+                // Устанавливаем заголовки запроса (если необходимо)
+                xhr.setRequestHeader("Content-Type", "application/json");
+                xhr.setRequestHeader("Authorization", "Bearer " + accessToken);
+
+                // Обработчик события, который будет вызван при успешном завершении запроса
+                xhr.onload = function () {
+                    // Проверяем статус ответа
+                    if (xhr.status >= 200 && xhr.status < 300) {
+                        // Разбираем полученный JSON-ответ, если он ожидается
+                        var response = JSON.parse(xhr.responseText);
+                        console.log("Успешный ответ:", response);
+                    } else {
+                        // Обрабатываем ошибку, если статус ответа не в пределах 2xx
+                        console.error("Ошибка при выполнении запроса. Статус:", xhr.status);
+                    }
+                };
+
+                // Обработчик события, который будет вызван в случае ошибки запроса
+                xhr.onerror = function () {
+                    console.error("Произошла ошибка при выполнении запроса.");
+                };
+
+                // Подготавливаем данные для отправки (в формате JSON)
+                var requestData = {
+                    key1: sectionId,
+                    key2: taskId,
+                    key3: document.getElementById("textInput").value
+                };
+
+                // Преобразуем объект с данными в формат JSON и отправляем запрос
+                xhr.send(JSON.stringify(requestData));
+
+
+                // Закройте модальное окно после отправки запроса
+                modal.style.display = "none";
+            };
         }
+
+        // Переместить элемент в секцию
+        event.target.appendChild(draggedItem);
         draggedItem.style.opacity = 1;
     });
+
+    // Закрыть модальное окно при клике на крестик
+    var closeButton = document.getElementsByClassName("close")[0];
+    closeButton.onclick = function() {
+        modal.style.display = "none";
+    };
 });
 
+// Функция для чтения cookie по имени
+function getCookie(name) {
+    var value = "; " + document.cookie;
+    var parts = value.split("; " + name + "=");
+    if (parts.length === 2) {
+        return parts.pop().split(";").shift();
+    }
+}
 
 </script>
 </body>
