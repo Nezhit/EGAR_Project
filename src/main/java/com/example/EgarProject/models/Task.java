@@ -44,6 +44,10 @@ public class Task {
 
     }
 
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     public String getDescription() {
         return description;
     }
@@ -74,5 +78,17 @@ public class Task {
 
     public void setTaskCon(Set<TaskCon> taskCon) {
         this.taskCons = taskCon;
+    }
+
+    public Set<TaskCon> getTaskCons() {
+        return taskCons;
+    }
+
+    public Set<ChangeJournal> getChanges() {
+        return changes;
+    }
+
+    public Long getId() {
+        return id;
     }
 }

@@ -14,7 +14,10 @@ import org.springframework.stereotype.Service;
 
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
+
 @Service
 public class UserInfo {
 
@@ -31,10 +34,9 @@ public class UserInfo {
         this.changeJournalRepo=changeJournalRepo;
     }
 
-
-    public Optional<User> getInfo(HttpServletRequest request){
+    public String extractUsername(HttpServletRequest request){// ... код для получения пользователя из куков
         String username=null;
-        Optional<User> userOptional = null;
+
         jakarta.servlet.http.Cookie[] cookies= request.getCookies();
         //Посмотреть если можно то изменить цикл на stream
         if( cookies!=null){
@@ -45,6 +47,11 @@ public class UserInfo {
                 }
             }
         }
+        return username;
+    }
+    public Optional<User> getInfo(HttpServletRequest request){
+        Optional<User> userOptional = null;
+        String username=extractUsername(request);
         if(username!=null){
             userOptional=userRepo.findByUsername(username);
 
@@ -59,18 +66,8 @@ public class UserInfo {
         return userRepo.findByUsername(username);
     }
     public List<ChangeJournal> getUserTasksByUsername(HttpServletRequest request) {
-        String username=null;
+        String username=extractUsername(request);
         Optional<User> userOptional = null;
-        jakarta.servlet.http.Cookie[] cookies= request.getCookies();
-        //Посмотреть если можно то изменить цикл на stream
-        if( cookies!=null){
-            for(Cookie cookie:cookies){
-                if(cookie.getName().equals("username")){
-                    username=cookie.getValue();
-                    break;
-                }
-            }
-        }
         // Найти пользователя по username
         String finalUsername = username;
         User user = userRepo.findByUsername(username)
@@ -80,4 +77,14 @@ public class UserInfo {
         // Найти все задачи для данного пользователя
         return changeJournalRepo.findByUser(user);
     }
+    public Map<Long, List<ChangeJournal>> getMapUserTasksByUsername(HttpServletRequest request) {
+        // Найти все задачи для данного пользователя
+        List<ChangeJournal> changeJournals = getUserTasksByUsername( request);
+        // Группировка по taskId
+        Map<Long, List<ChangeJournal>> groupedChangeJournals = changeJournals.stream()
+                .collect(Collectors.groupingBy(changeJournal -> changeJournal.getTask().getId()));
+
+        return groupedChangeJournals;
+    }
+
 }

@@ -39,6 +39,14 @@ public class ChangeJournal {
         this.changeText = changeText;
     }
 
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     public Task getTask() {
         return task;
     }
@@ -65,6 +73,12 @@ public class ChangeJournal {
 
     public String getChangeText() {
         return changeText;
+    }
+    public String getTaskDescription() {
+        if (task != null) {
+            return task.getDescription();
+        }
+        return "";
     }
 
     public void setChangeText(String changeText) {
