@@ -9,6 +9,7 @@ import com.example.EgarProject.pojo.ChangeConRequest;
 import com.example.EgarProject.repos.ChangeJournalRepo;
 import com.example.EgarProject.repos.TaskConRepo;
 import com.example.EgarProject.repos.TaskRepo;
+import com.example.EgarProject.services.ChangeConService;
 import com.example.EgarProject.services.UserInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -30,11 +31,7 @@ public class AccountController {
     @Autowired
     UserInfo userInfo;
     @Autowired
-    TaskRepo taskRepo;
-    @Autowired
-    ChangeJournalRepo changeJournalRepo;
-    @Autowired
-    TaskConRepo taskConRepo;
+    ChangeConService changeConService;
     @GetMapping("/account")
     @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
     public String userAccess(HttpServletRequest request,Model model ) {
@@ -72,10 +69,11 @@ public class AccountController {
     @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
     public String changeCon(HttpServletRequest request, Model model, @RequestBody ChangeConRequest changeConRequest){
         System.out.println(changeConRequest.getSectionId()+" "+changeConRequest.getTextInput()+" "+changeConRequest.getTaskId());
-
-        Optional<Task> oneTask = taskRepo.findById(changeConRequest.getTaskId());
         Optional<User> user = userInfo.getInfo(request);
         model.addAttribute("user",user);
+        changeConService.fixChanges(changeConRequest,user);
+
+        /*Optional<Task> oneTask = taskRepo.findById(changeConRequest.getTaskId());
         System.out.println(oneTask.stream().iterator().next().getDescription());
         if (oneTask.isPresent() && user.isPresent()) {
             Task task = oneTask.get();
@@ -107,7 +105,7 @@ public class AccountController {
             changeJournalRepo.save(changeJournal);
         } else {
             // Обработка ситуации, когда задача или пользователь не найдены в базе данных
-        }
+        }*/
 
 
         //changeJournalRepo.saveAndFlush(changeJournal);
