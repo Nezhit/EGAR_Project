@@ -11,8 +11,8 @@
 Успешная авторизация
 <p>Имя пользователя: <span th:text="${user.get().getUsername()}"></span></p>
 <p>Email: <span th:text="${user.get().email}"></span></p>
-<p>Роль: <span th:text="${user.get().roles.iterator().next().name}"></span></p>
-<p><a href="/main">На главную страницу</a></p>
+<p>Роль: <span id="roleId" th:text="${user.get().roles.iterator().next().name}"></span></p>
+<p id="hrpanelhref"><a href="/main">На главную страницу</a></p>
 <p>Ваши задачи:</p>
 <div th:each="entry : ${groupedTasks}">
     <div class="draggable" id="drag" draggable="true" data-taskid="${entry.key}" data-section="${change.getTask().getTaskCons()[0].getCondition()}">
@@ -56,25 +56,49 @@ document.addEventListener("DOMContentLoaded", function () {
     var sectionIdSpan = document.getElementById("sectionId");
     var textInput = document.getElementById("textInput");
 
-        // Получить все элементы с классом draggable
+       // Получить все элементы с классом draggable
     var draggableElements = document.querySelectorAll(".draggable");
 
-    // Перебрать все найденные элементы
-    draggableElements.forEach(function(element) {
-        // Получить значение conditionKey для текущего элемента
-        var initialSection = element.querySelector("#conditionKey").textContent;
+    // Проверить, есть ли элементы с классом .draggable
+    if (draggableElements.length > 0) {
+        // Перебрать все найденные элементы
+        draggableElements.forEach(function(element) {
 
-        // Переместить элемент в соответствующую секцию в зависимости от значения conditionKey
-        if (initialSection === "TODO") {
-            document.getElementById("section1").appendChild(element);
-        } else if (initialSection === "IN PROGRESS") {
-            document.getElementById("section2").appendChild(element);
-        } else if (initialSection === "TESTING") {
-            document.getElementById("section3").appendChild(element);
-        } else if (initialSection === "DONE") {
-            document.getElementById("section4").appendChild(element);
-        }
-    });
+            // Получить значение conditionKey для текущего элемента
+            var initialSection = element.querySelector("#conditionKey").textContent;
+
+            // Переместить элемент в соответствующую секцию в зависимости от значения conditionKey
+            if (initialSection === "TODO") {
+                document.getElementById("section1").appendChild(element);
+            } else if (initialSection === "IN_PROGRESS") {
+                document.getElementById("section2").appendChild(element);
+            } else if (initialSection === "TESTING") {
+                document.getElementById("section3").appendChild(element);
+            } else if (initialSection === "DONE") {
+                document.getElementById("section4").appendChild(element);
+            }
+        });
+    } else {
+        console.log("Нет элементов с классом .draggable на странице.");
+    }
+
+
+    var checkrole = document.getElementById("roleId").textContent;
+
+    if (checkrole === "ROLE_MODERATOR" || checkrole === "ROLE_ADMIN") {
+        // Если условие выполняется, создаем новый параграф и элемент ссылки
+        var newParagraph = document.createElement("p");
+        var hrlink = document.createElement("a");
+        hrlink.href = "/hrpanel";
+        hrlink.textContent = " HR панель";
+
+        // Добавляем новую ссылку к новому параграфу
+        newParagraph.appendChild(hrlink);
+
+        // Находим родительский элемент и добавляем новый параграф к нему
+        var parentElement = document.getElementById("hrpanelhref");
+        parentElement.appendChild(newParagraph);
+    }
 
 
     // Начало перетаскивания
