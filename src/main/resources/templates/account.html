@@ -15,7 +15,7 @@
 <p><a href="/main">На главную страницу</a></p>
 <p>Ваши задачи:</p>
 <div th:each="entry : ${groupedTasks}">
-    <div class="draggable" id="drag" draggable="true" data-taskid="${entry.key}">
+    <div class="draggable" id="drag" draggable="true" data-taskid="${entry.key}" data-section="${change.getTask().getTaskCons()[0].getCondition()}">
         <div th:each="change : ${entry.value}">
             <div>
                 <span id="entryKey" th:text="${entry.key}"></span>
@@ -24,7 +24,7 @@
                 <span th:text="${change.getChangeTime()}"></span>
                 <span th:text="${change.getUser().getUsername()}"></span>
                 <div th:each="taskCon : ${change.getTask().getTaskCons()}">
-                    <span th:text="${taskCon.getCondition()}"></span>
+                    <span id="conditionKey" th:text="${taskCon.getCondition()}"></span>
                 </div>
             </div>
         </div>
@@ -55,6 +55,27 @@ document.addEventListener("DOMContentLoaded", function () {
     var submitButton = document.getElementById("submitButton");
     var sectionIdSpan = document.getElementById("sectionId");
     var textInput = document.getElementById("textInput");
+
+        // Получить все элементы с классом draggable
+    var draggableElements = document.querySelectorAll(".draggable");
+
+    // Перебрать все найденные элементы
+    draggableElements.forEach(function(element) {
+        // Получить значение conditionKey для текущего элемента
+        var initialSection = element.querySelector("#conditionKey").textContent;
+
+        // Переместить элемент в соответствующую секцию в зависимости от значения conditionKey
+        if (initialSection === "TODO") {
+            document.getElementById("section1").appendChild(element);
+        } else if (initialSection === "IN PROGRESS") {
+            document.getElementById("section2").appendChild(element);
+        } else if (initialSection === "TESTING") {
+            document.getElementById("section3").appendChild(element);
+        } else if (initialSection === "DONE") {
+            document.getElementById("section4").appendChild(element);
+        }
+    });
+
 
     // Начало перетаскивания
     document.addEventListener("dragstart", function (event) {
