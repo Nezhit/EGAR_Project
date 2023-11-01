@@ -19,6 +19,8 @@ public class Task {
 
     @Column(name = "ended")
     private LocalDateTime ended;
+    @Column(name = "deadline")
+    private LocalDateTime deadline;
 
     @ManyToMany
     @JoinTable(
@@ -37,11 +39,11 @@ public class Task {
     public Task() {
     }
 
-    public Task(String description, LocalDateTime created, LocalDateTime ended) {
+    public Task(String description, LocalDateTime created, LocalDateTime ended,LocalDateTime deadline) {
         this.description = description;
         this.created = created;
         this.ended = ended;
-
+        this.deadline=deadline;
     }
 
     public void setId(Long id) {
@@ -86,6 +88,14 @@ public class Task {
 
     public Set<ChangeJournal> getChanges() {
         return changes;
+    }
+
+    public LocalDateTime getDeadline() {
+        return deadline;
+    }
+
+    public void setDeadline(LocalDateTime deadline) {
+        this.deadline = deadline;
     }
 
     public Long getId() {
