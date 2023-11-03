@@ -1,5 +1,6 @@
 package com.example.EgarProject.services;
 
+import com.example.EgarProject.controllers.HRController;
 import com.example.EgarProject.models.Task;
 import com.example.EgarProject.models.User;
 import com.example.EgarProject.models.enums.ERole;
@@ -15,10 +16,7 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
 
@@ -28,26 +26,21 @@ public class HRService {
     private UserRepo userRepo;
     @Autowired
     private TaskRepo taskRepo;
+
     private final CopyOnWriteArrayList<SseEmitter> emitters = new CopyOnWriteArrayList<>();
     public Optional<User> HRFindEmployee() {
-        /*List<User> users = userRepo.findAll();
-        users.stream().iterator().next().getRoles().stream().forEach(r-> System.out.println("ROLES= "+r.getName()));
-        List<User> filteredUsers=users.stream()
-                .filter(user -> user.getRoles().stream()
-                        .noneMatch(role -> role.getName().equals(ERole.ROLE_MODERATOR) || role.getName().equals(ERole.ROLE_ADMIN)))
-                .collect(Collectors.toList());
-        return filteredUsers;*/
+
         List<ERole> excludedRoles = Arrays.asList(ERole.ROLE_MODERATOR, ERole.ROLE_ADMIN);
         return userRepo.findEmployeesWithoutRoles(excludedRoles);
     }
-    @Scheduled(cron = "0 0 * * * *") // Запускать каждый час
-    public void checkTaskDeadlines() {
+    //@Scheduled(initialDelay = 20000,fixedRate = 10000) // Запускать каждый час
+    public List<List<Task>> checkTaskDeadlines() {
         // Optional<Task>tasks =taskRepo.findTasksForDeadline();
         LocalDateTime now = LocalDateTime.now();
         List<Task> overdueTasks = taskRepo.findOverdueTasks(now);
         List<Task> tasksWithEndedLaterThanDeadline = taskRepo.findTasksWithEndedLaterThanDeadline();
         List<Task> tasksWithTwoDaysDifference = taskRepo.findTasksWithTwoDaysDifference(now.plusDays(2));
-        overdueTasks.forEach(task -> {
+        /*overdueTasks.forEach(task -> {
             System.out.println("overdueTask ID: " + task.getId());
             System.out.println("overdueTask Name: " + task.getDescription());
             // Выведите другие поля задачи, если они есть
@@ -64,26 +57,49 @@ public class HRService {
             System.out.println("tasksWithTwoDaysDifference Name: " + task.getDescription());
             // Выведите другие поля задачи, если они есть
             System.out.println("----------------------");
-        });
+        });*/
 
         List<List<Task>> notifications = new ArrayList<>();
         notifications.add(overdueTasks);
         notifications.add(tasksWithEndedLaterThanDeadline);
         notifications.add(tasksWithTwoDaysDifference);
-        for (SseEmitter emitter : emitters) {
-            try {
-                emitter.send(SseEmitter.event().data(notifications));
-            } catch (IOException e) {
-                // Обработка ошибок, если таковые возникнут при отправке уведомлений
-            }
-        }
+        System.out.println("ТУТ ОШИБКА!!");
+
+
+
+
+        return notifications;
+
     }
 
-    public SseEmitter subscribe() {
-        SseEmitter emitter = new SseEmitter();
+
+    public void addEmitter(SseEmitter emitter) {
         emitters.add(emitter);
-        emitter.onCompletion(() -> emitters.remove(emitter));
-        return emitter;
     }
+
+    public void removeEmitter(SseEmitter emitter) {
+        emitters.remove(emitter);
+    }
+
+   // @Scheduled(fixedRate = 20000) // отправка уведомлений каждые 20 секунд
+    public void sendNotifications() {
+        List<List<Task>> notifications = checkTaskDeadlines();
+        List<SseEmitter> deadEmitters = new ArrayList<>();
+
+        for (SseEmitter emitter : emitters) {
+            try {
+                emitter.send(SseEmitter.event()
+                        .name("notification")
+                        .data(notifications));
+            } catch (IOException e) {
+                deadEmitters.add(emitter);
+            }
+        }
+
+        // Удаление закрытых эмиттеров из списка
+        emitters.removeAll(deadEmitters);
+
+    }
+
 
 }

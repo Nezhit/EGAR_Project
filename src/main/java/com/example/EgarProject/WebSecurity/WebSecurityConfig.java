@@ -72,7 +72,8 @@ public class WebSecurityConfig  {
                         .requestMatchers("/api/v1/management/**").permitAll()
                         .requestMatchers("/api/auth/signin").permitAll()
                         .requestMatchers("/api/auth/signup").permitAll()
-                        .requestMatchers("/", "/home","/uno").permitAll()
+                        .requestMatchers("/send-task-notifications").permitAll()
+                        .requestMatchers("/", "/home","/uno","/subscribe","/subscribes").permitAll()//
                         .anyRequest().authenticated()
 
                 )

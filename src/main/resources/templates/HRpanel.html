@@ -25,6 +25,72 @@
         <td colspan="3">User not found</td>
     </tr>
 </table>
+<div id="overdueTasks">
+    <h2>Просроченные и невыполненные задания</h2>
+    <ul></ul>
+</div>
 
+<div id="tasksWithEndedLaterThanDeadline">
+    <h2>Просроченные задачи</h2>
+    <ul></ul>
+</div>
+
+<div id="tasksWithTwoDaysDifference">
+    <h2>Задания, срок сдачи которых заканчивается через 2 дня</h2>
+    <ul></ul>
+</div>
+
+<script>
+    const overdueTasksList = document.getElementById('overdueTasks').querySelector('ul');
+    const tasksWithEndedLaterThanDeadlineList = document.getElementById('tasksWithEndedLaterThanDeadline').querySelector('ul');
+    const tasksWithTwoDaysDifferenceList = document.getElementById('tasksWithTwoDaysDifference').querySelector('ul');
+
+    var accessToken = getCookie("Authorization");
+    const eventSource = new EventSource('/subscribe',{headers:{'Authorization':'Bearer '+accessToken}});
+
+
+    eventSource.onmessage=function(event){
+        const notifications = JSON.parse(event.data);
+
+        overdueTasksList.innerHTML = '';
+        tasksWithEndedLaterThanDeadlineList.innerHTML = '';
+        tasksWithTwoDaysDifferenceList.innerHTML = '';
+        console.log('Получены увдомления: ',notifications);
+
+        notifications.forEach(task=>{
+            console.log(`ID: ${task.id}, Description: ${task.description}`);
+
+        });
+        // Обновите списки задач с новыми данными
+        notifications[0].forEach(task => {
+            const listItem = document.createElement('li');
+            listItem.textContent = task.description;
+            overdueTasksList.appendChild(listItem);
+        });
+
+        notifications[1].forEach(task => {
+            const listItem = document.createElement('li');
+            listItem.textContent = task.description;
+            tasksWithEndedLaterThanDeadlineList.appendChild(listItem);
+        });
+
+        notifications[2].forEach(task => {
+            const listItem = document.createElement('li');
+            listItem.textContent = task.description;
+            tasksWithTwoDaysDifferenceList.appendChild(listItem);
+        });
+    }
+    eventSource.onerror = function(error) {
+    console.error('Error occurred:', error);
+    };
+
+    function getCookie(name) {
+    var value = "; " + document.cookie;
+    var parts = value.split("; " + name + "=");
+    if (parts.length === 2) {
+        return parts.pop().split(";").shift();
+        }
+    }
+</script>
 </body>
 </html>
