@@ -39,8 +39,9 @@ public class HRService {
         LocalDateTime now = LocalDateTime.now();
         List<Task> overdueTasks = taskRepo.findOverdueTasks(now);
         List<Task> tasksWithEndedLaterThanDeadline = taskRepo.findTasksWithEndedLaterThanDeadline();
-        List<Task> tasksWithTwoDaysDifference = taskRepo.findTasksWithTwoDaysDifference(now.plusDays(2));
-        /*overdueTasks.forEach(task -> {
+        List<Task> tasksWithTwoDaysDifference = taskRepo.findTasksWithTwoDaysDifference(now.plusDays(2),now);
+
+        overdueTasks.forEach(task -> {
             System.out.println("overdueTask ID: " + task.getId());
             System.out.println("overdueTask Name: " + task.getDescription());
             // Выведите другие поля задачи, если они есть
@@ -57,7 +58,7 @@ public class HRService {
             System.out.println("tasksWithTwoDaysDifference Name: " + task.getDescription());
             // Выведите другие поля задачи, если они есть
             System.out.println("----------------------");
-        });*/
+        });
 
         List<List<Task>> notifications = new ArrayList<>();
         notifications.add(overdueTasks);
