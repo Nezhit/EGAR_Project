@@ -1,5 +1,6 @@
 package com.example.EgarProject.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.util.HashSet;
@@ -17,11 +18,13 @@ public class User {
     @Column(unique = true)
     private String email;
     private String password;
+    @JsonIgnore
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name="user_roles",
             joinColumns = @JoinColumn(name="user_id"),
             inverseJoinColumns = @JoinColumn(name="role_id"))
     private Set<Role> roles=new HashSet<>();
+    @JsonIgnore
     //--------------------------
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private Set<ChangeJournal> changes = new HashSet<>();

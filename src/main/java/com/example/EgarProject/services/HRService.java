@@ -74,7 +74,7 @@ public class HRService {
     }
 
 
-    public void addEmitter(SseEmitter emitter) {
+    /*public void addEmitter(SseEmitter emitter) {
         emitters.add(emitter);
     }
 
@@ -100,7 +100,7 @@ public class HRService {
         // Удаление закрытых эмиттеров из списка
         emitters.removeAll(deadEmitters);
 
-    }
+    }*/
 
 
 }

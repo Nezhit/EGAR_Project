@@ -1,5 +1,6 @@
 package com.example.EgarProject.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
@@ -28,7 +29,9 @@ public class Task {
             joinColumns = @JoinColumn(name = "task_id"), // Имя столбца с внешним ключом в таблице task_conditions
             inverseJoinColumns = @JoinColumn(name = "condition_id") // Имя столбца с внешним ключом в таблице task_conditions
     )
+    @JsonIgnore
     private Set<TaskCon> taskCons = new HashSet<>();
+    @JsonIgnore
     @OneToMany(mappedBy = "task", cascade = CascadeType.ALL)
     private Set<ChangeJournal> changes = new HashSet<>();
     @PrePersist
