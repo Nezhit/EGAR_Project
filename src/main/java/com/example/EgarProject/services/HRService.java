@@ -28,7 +28,7 @@ public class HRService {
     private TaskRepo taskRepo;
 
     private final CopyOnWriteArrayList<SseEmitter> emitters = new CopyOnWriteArrayList<>();
-    public Optional<User> HRFindEmployee() {
+    public List<User> HRFindEmployee() {
 
         List<ERole> excludedRoles = Arrays.asList(ERole.ROLE_MODERATOR, ERole.ROLE_ADMIN);
         return userRepo.findEmployeesWithoutRoles(excludedRoles);

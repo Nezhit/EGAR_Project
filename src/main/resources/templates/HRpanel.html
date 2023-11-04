@@ -16,15 +16,16 @@
         <th>Username</th>
         <th>Email</th>
     </tr>
-    <tr th:if="${users.isPresent()}">
-        <td th:text="${users.get().id}"></td>
-        <td th:text="${users.get().username}"></td>
-        <td th:text="${users.get().email}"></td>
+    <tr th:each="user : ${users}">
+        <td th:text="${user.id}"></td>
+        <td th:text="${user.username}"></td>
+        <td th:text="${user.email}"></td>
     </tr>
-    <tr th:unless="${users.isPresent()}">
-        <td colspan="3">User not found</td>
+    <tr th:if="${#lists.isEmpty(users)}">
+        <td colspan="3">User list is empty</td>
     </tr>
 </table>
+
 <div id="overdueTasks">
     <h2>Просроченные и невыполненные задания</h2>
     <ul></ul>

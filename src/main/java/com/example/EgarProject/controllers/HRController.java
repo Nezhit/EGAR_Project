@@ -38,7 +38,7 @@ public class HRController {
     public String HRtaskPanel(Model model){
         //List<User> users = hrService.HRFindEmployee();
         //hrService.checkTaskDeadlines();
-        Optional<User> users=hrService.HRFindEmployee();
+        List<User> users=hrService.HRFindEmployee();
         model.addAttribute("users", users);
 
         return "HRpanel";

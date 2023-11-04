@@ -23,6 +23,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
@@ -68,9 +69,13 @@ public class AuthController {
                 userDetails.getEmail(),
                 roles));
     }
-
+    @GetMapping("api/auth/signup")
+    public String signup(){
+        return "signup";
+    }
+    @Transactional
     @PostMapping("/api/auth/signup")
-    public ResponseEntity<?> registerUser(@RequestBody SignupRequest signupRequest) {
+    public synchronized ResponseEntity<?> registerUser(@RequestBody SignupRequest signupRequest) {
 
         if (userRespository.existsByUsername(signupRequest.getUsername())) {
             return ResponseEntity

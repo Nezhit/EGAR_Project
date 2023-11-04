@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Signup Form</title>
+</head>
+<body>
+<form id="signupForm">
+    <label for="username">Username:</label>
+    <input type="text" id="username" name="username" required><br><br>
+
+    <label for="email">Email:</label>
+    <input type="email" id="email" name="email" required><br><br>
+
+    <label for="password">Password:</label>
+    <input type="password" id="password" name="password" required><br><br>
+
+    <label for="roles">Roles (через запятую):</label>
+    <input type="text" id="roles" name="roles" required><br><br>
+
+    <button type="button" onclick="submitForm()">Submit</button>
+</form>
+
+<script>
+        function submitForm() {
+            var username = document.getElementById("username").value;
+            var email = document.getElementById("email").value;
+            var password = document.getElementById("password").value;
+            var roles = document.getElementById("roles").value.split(',');
+
+            var signupRequest = {
+                username: username,
+                email: email,
+                password: password,
+                roles: roles
+            };
+
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST", "/api/auth/signup", true);
+            xhr.setRequestHeader("Content-Type", "application/json");
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    alert("Signup successful!");
+                    window.location.href = "/";
+                    //alert("href");
+                    // Handle successful signup response here if needed
+                } else if (xhr.readyState === 4 && xhr.status !== 200) {
+                    alert("Signup failed. Please try again.");
+                    // Handle failed signup response here if needed
+                }
+            };
+            xhr.send(JSON.stringify(signupRequest));
+        }
+    </script>
+</body>
+</html>

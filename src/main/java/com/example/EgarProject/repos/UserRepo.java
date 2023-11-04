@@ -14,7 +14,7 @@ import java.util.Optional;
 public interface UserRepo extends JpaRepository<User,Long> {
     Optional<User> findByUsername(String username);
     @Query("SELECT u FROM User u WHERE u.id NOT IN (SELECT u.id FROM User u JOIN u.roles r WHERE r.name IN (:excludedRoles))")
-    Optional<User> findEmployeesWithoutRoles(@Param("excludedRoles") List<ERole> excludedRoles);
+    List<User> findEmployeesWithoutRoles(@Param("excludedRoles") List<ERole> excludedRoles);
     List<User> findAll();
     Boolean existsByUsername(String username);
     Boolean existsByEmail(String email);
