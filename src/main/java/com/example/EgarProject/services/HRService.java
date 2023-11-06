@@ -2,8 +2,12 @@ package com.example.EgarProject.services;
 
 import com.example.EgarProject.controllers.HRController;
 import com.example.EgarProject.models.Task;
+import com.example.EgarProject.models.TaskCon;
 import com.example.EgarProject.models.User;
 import com.example.EgarProject.models.enums.ERole;
+import com.example.EgarProject.models.enums.ETaskCon;
+import com.example.EgarProject.pojo.TaskCreationRequest;
+import com.example.EgarProject.repos.TaskConRepo;
 import com.example.EgarProject.repos.TaskRepo;
 import com.example.EgarProject.repos.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +30,8 @@ public class HRService {
     private UserRepo userRepo;
     @Autowired
     private TaskRepo taskRepo;
+    @Autowired
+    private TaskConRepo taskConRepo;
 
     private final CopyOnWriteArrayList<SseEmitter> emitters = new CopyOnWriteArrayList<>();
     public List<User> HRFindEmployee() {
@@ -70,6 +76,19 @@ public class HRService {
 
 
         return notifications;
+
+    }
+    public void createTask(TaskCreationRequest taskCreationRequest){
+        Task task=new Task();
+        Set<TaskCon> taskCons=new HashSet<>();
+        TaskCon newTaskCon=new TaskCon(ETaskCon.TODO);
+        taskCons.add(newTaskCon);
+        //taskConRepo.saveTaskCon(newTaskCon.getCondition());
+        taskConRepo.save(newTaskCon);
+        task.setTaskCon(taskCons);
+        task.setDescription(taskCreationRequest.getDescription());
+        task.setDeadline(taskCreationRequest.getDeadline());
+        taskRepo.save(task);
 
     }
 

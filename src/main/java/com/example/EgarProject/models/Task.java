@@ -2,6 +2,7 @@ package com.example.EgarProject.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
@@ -16,6 +17,7 @@ public class Task {
     @Column(name = "description")
     private String description;
     @Column(name = "created")
+    @CreationTimestamp
     private LocalDateTime created;
 
     @Column(name = "ended")

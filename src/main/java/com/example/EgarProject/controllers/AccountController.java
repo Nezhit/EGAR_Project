@@ -77,9 +77,5 @@ public class AccountController {
     public String test() {
         return "test";
     }
-    @GetMapping("/main")
-    @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
-    public String main() {
-        return "main";
-    }
+
 }
