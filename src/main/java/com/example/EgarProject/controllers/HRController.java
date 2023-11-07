@@ -9,6 +9,9 @@ import com.example.EgarProject.repos.TaskConRepo;
 import com.example.EgarProject.repos.TaskRepo;
 import com.example.EgarProject.repos.UserRepo;
 import com.example.EgarProject.services.HRService;
+import com.example.EgarProject.services.TaskService;
+import com.example.EgarProject.services.UserInfo;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -27,6 +30,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutorService;
@@ -37,7 +41,10 @@ import java.util.concurrent.Executors;
 public class HRController {
     @Autowired
     HRService hrService;
-
+    @Autowired
+    TaskService taskService;
+    @Autowired
+    UserInfo userInfo;
     @Autowired
     TaskRepo taskRepo;
     @Autowired
@@ -103,11 +110,22 @@ public class HRController {
             // Получите список задач, которые пользователь может видеть и передайте его в модель
             // ...
             // model.addAttribute("tasks", tasks);
+            List<Task>freeTasks= taskService.findTaskWithoutUser() ;
+            model.addAttribute("freeTasks",freeTasks);
+
             return "main";
         } else {
             // Логика для других ролей или неавторизованных пользователей
             return "accessDenied";
         }
+    }
+    @PostMapping("/assign-task")
+    public ResponseEntity<String> assignTask(@RequestBody ArrayList<Long> ids, HttpServletRequest request){
+       ids.forEach((id) -> userInfo.assignTaskUser(request,id));
+
+
+
+        return ResponseEntity.ok("Задача успешно присоединина");
     }
     @PostMapping("/create-task")
     @Transactional

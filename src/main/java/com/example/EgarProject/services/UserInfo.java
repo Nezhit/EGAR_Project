@@ -10,9 +10,11 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -85,6 +87,13 @@ public class UserInfo {
                 .collect(Collectors.groupingBy(changeJournal -> changeJournal.getTask().getId()));
 
         return groupedChangeJournals;
+    }
+    public ResponseEntity<String> assignTaskUser(HttpServletRequest request,Long id){
+        String username=extractUsername(request);
+        String firstCommit="Задание выбрано";
+        ChangeJournal changeJournal=new ChangeJournal(taskRepo.findById(id).get(),userRepo.findByUsername(username).get(), LocalDateTime.now(),firstCommit);
+        changeJournalRepo.save(changeJournal);
+        return ResponseEntity.ok("Успешно прекреплены задачи");
     }
 
 }

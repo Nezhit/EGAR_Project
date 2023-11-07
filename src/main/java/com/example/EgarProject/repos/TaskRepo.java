@@ -33,7 +33,8 @@ public interface TaskRepo extends JpaRepository<Task,Long> {
 
     @Query("SELECT t FROM Task t WHERE t.ended IS NULL AND t.deadline < :twoDaysAfterNow AND t.deadline>:nowTime")
     List<Task> findTasksWithTwoDaysDifference(@Param("twoDaysAfterNow") LocalDateTime twoDaysAfterNow, LocalDateTime nowTime);
-
+    @Query("SELECT t FROM Task t LEFT JOIN t.changes c WHERE c.task IS NULL OR (t.id IS NOT NULL AND c.id IS NULL)")
+    List<Task> findTasksWithoutUser();
     // Поиск задач по состоянию (TaskCon)
     Optional<Task> findByTaskCons(TaskCon taskCon);
 
