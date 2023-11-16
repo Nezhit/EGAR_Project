@@ -1,6 +1,7 @@
 package com.example.EgarProject.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonValue;
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
 
@@ -51,6 +52,7 @@ public class Task {
         this.deadline=deadline;
     }
 
+
     public void setId(Long id) {
         this.id = id;
     }
@@ -98,6 +100,7 @@ public class Task {
     public LocalDateTime getDeadline() {
         return deadline;
     }
+
 
     public void setDeadline(LocalDateTime deadline) {
         this.deadline = deadline;

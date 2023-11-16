@@ -1,12 +1,14 @@
 package com.example.EgarProject.services;
 
 import com.example.EgarProject.controllers.HRController;
+import com.example.EgarProject.models.ChangeJournal;
 import com.example.EgarProject.models.Task;
 import com.example.EgarProject.models.TaskCon;
 import com.example.EgarProject.models.User;
 import com.example.EgarProject.models.enums.ERole;
 import com.example.EgarProject.models.enums.ETaskCon;
 import com.example.EgarProject.pojo.TaskCreationRequest;
+import com.example.EgarProject.repos.ChangeJournalRepo;
 import com.example.EgarProject.repos.TaskConRepo;
 import com.example.EgarProject.repos.TaskRepo;
 import com.example.EgarProject.repos.UserRepo;
@@ -32,6 +34,8 @@ public class HRService {
     private TaskRepo taskRepo;
     @Autowired
     private TaskConRepo taskConRepo;
+    @Autowired
+    private ChangeJournalRepo changeJournalRepo;
 
     private final CopyOnWriteArrayList<SseEmitter> emitters = new CopyOnWriteArrayList<>();
     public List<User> HRFindEmployee() {
@@ -78,6 +82,11 @@ public class HRService {
         return notifications;
 
     }
+    public List<Task> getTasksWithChanges(){
+
+
+        return taskRepo.findAll();
+    }
     public void createTask(TaskCreationRequest taskCreationRequest){
         Task task=new Task();
         Set<TaskCon> taskCons=new HashSet<>();
@@ -90,6 +99,9 @@ public class HRService {
         task.setDeadline(taskCreationRequest.getDeadline());
         taskRepo.save(task);
 
+    }
+    public List<ChangeJournal> findLinkedChanges(Long id){
+        return changeJournalRepo.findByTaskId(id);
     }
 
 

@@ -1,5 +1,6 @@
 package com.example.EgarProject.controllers;
 
+import com.example.EgarProject.models.ChangeJournal;
 import com.example.EgarProject.models.Task;
 import com.example.EgarProject.models.TaskCon;
 import com.example.EgarProject.models.User;
@@ -13,6 +14,7 @@ import com.example.EgarProject.services.TaskService;
 import com.example.EgarProject.services.UserInfo;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
+import jakarta.websocket.server.PathParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -25,6 +27,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
@@ -59,9 +62,24 @@ public class HRController {
         List<User> users=hrService.HRFindEmployee();
         model.addAttribute("users", users);
 
+
         return "HRpanel";
     }
+    @GetMapping("/hrpanel/testtask")
+    @PreAuthorize(" hasRole('MODERATOR') ")
+    public ResponseEntity<List<Task>> testtask(Model model){
 
+        model.addAttribute("tasks",hrService.getTasksWithChanges());
+        return ResponseEntity.ok( hrService.getTasksWithChanges());
+    }
+    @GetMapping("/hrpanel/testtask/{id}")
+    @PreAuthorize(" hasRole('MODERATOR') ")
+    public ResponseEntity<List<ChangeJournal>> changeJournalWithTaskId(Model model, @PathVariable("id") Long id){
+
+        //model.addAttribute("tasks",hrService.getTasksWithChanges());
+        return ResponseEntity.ok(hrService.findLinkedChanges(id));
+
+    }
 
     @GetMapping("/subscribe")
     public SseEmitter subscribe() {
@@ -72,12 +90,14 @@ public class HRController {
 
         emitter.onCompletion(() -> {
             // Удалите эмиттер из списка по завершении соединения
+            System.out.println("ПРОИЗОШЕЛ КРИНЖ");
             emitters.remove(emitter);
         });
 
         return emitter;
 
     }
+
     @PostMapping("/send-task-notifications")
     public ResponseEntity<String> sendTaskNotifications() {
         sendSSEUpdate();

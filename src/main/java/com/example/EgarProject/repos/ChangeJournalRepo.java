@@ -17,6 +17,7 @@ public interface ChangeJournalRepo extends JpaRepository<ChangeJournal,Long> {
 
     List<ChangeJournal> findByTaskAndUser(Task task, User user);
     List<ChangeJournal> findByUser(User user);
+    List<ChangeJournal> findByTaskId(Long id);
     List<ChangeJournal> findByChangeText(String changeText);
    // List<ChangeJournal> findByChangeTime(LocalDateTime changeTime);
    //List<ChangeJournal> findByChangeText(String changeText);
