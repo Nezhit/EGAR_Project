@@ -104,8 +104,8 @@ public class HRController {
         return ResponseEntity.ok("Task notifications sent successfully");
     }
 
-
-
+    @Transactional
+    @Scheduled(fixedRate = 10000) // Отправлять каждые 10 секунд
     public void sendSSEUpdate() {
         List<List<Task>> notifications = hrService.checkTaskDeadlines();
         for (SseEmitter emitter : emitters) {
@@ -115,6 +115,9 @@ public class HRController {
             } catch (IOException e) {
                 // Обработайте ошибки отправки данных, если необходимо
                 emitter.complete(); // Завершите соединение в случае ошибки
+            }
+            catch(IllegalStateException e){
+                emitter.complete();
             }
         }
     }

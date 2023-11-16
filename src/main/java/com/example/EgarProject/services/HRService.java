@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
@@ -43,7 +44,7 @@ public class HRService {
         List<ERole> excludedRoles = Arrays.asList(ERole.ROLE_MODERATOR, ERole.ROLE_ADMIN);
         return userRepo.findEmployeesWithoutRoles(excludedRoles);
     }
-    //@Scheduled(initialDelay = 20000,fixedRate = 10000) // Запускать каждый час
+    @Transactional
     public List<List<Task>> checkTaskDeadlines() {
         // Optional<Task>tasks =taskRepo.findTasksForDeadline();
         LocalDateTime now = LocalDateTime.now();

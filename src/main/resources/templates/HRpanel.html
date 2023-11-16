@@ -84,6 +84,16 @@
     eventSource.onerror = function(error) {
     console.error('Error occurred:', error);
     };
+    // Периодическая проверка соединения, если оно закрыто, создаем новый
+    setInterval(function () {
+        if (eventSource.readyState === EventSource.CLOSED) {
+            eventSource.close();
+            const newEventSource = new EventSource('/subscribe', { headers: { 'Authorization': 'Bearer ' + accessToken } });
+            newEventSource.onmessage = eventSource.onmessage;
+            newEventSource.onerror = eventSource.onerror;
+            eventSource = newEventSource;
+        }
+    }, 10000);
 
     function getCookie(name) {
     var value = "; " + document.cookie;
