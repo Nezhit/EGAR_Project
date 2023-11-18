@@ -91,10 +91,12 @@ document.addEventListener("DOMContentLoaded", function () {
         var hrlink = document.createElement("a");
         hrlink.href = "/hrpanel";
         hrlink.textContent = " HR панель";
-
+        var hrlinkToTasks = document.createElement("a");
+        hrlinkToTasks.href = "/tasks";
+        hrlinkToTasks.textContent = " Задачи";
         // Добавляем новую ссылку к новому параграфу
         newParagraph.appendChild(hrlink);
-
+        newParagraph.appendChild(hrlinkToTasks);
         // Находим родительский элемент и добавляем новый параграф к нему
         var parentElement = document.getElementById("hrpanelhref");
         parentElement.appendChild(newParagraph);

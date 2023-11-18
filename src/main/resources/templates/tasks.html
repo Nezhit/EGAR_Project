@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+Tasks
+<div id="root"></div>
+</body>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const app = document.getElementById("root");
+    let xhr = new XMLHttpRequest();
+    var accessToken = getCookie("Authorization");
+    xhr.open("GET", "/hrpanel/testtask", true);
+    xhr.setRequestHeader("Authorization", "Bearer " + accessToken);
+    xhr.setRequestHeader("Content-Type", "application/json");
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState === XMLHttpRequest.DONE) {
+            if (xhr.status === 200) {
+
+                var response = JSON.parse(xhr.responseText);
+                console.log("Успешный ответ:", response);
+                response.forEach((obj) => {
+                    const node = document.createElement("P");
+                    const textNode = document.createTextNode(obj.description);
+                    node.appendChild(textNode);
+                    node.setAttribute("id", obj.id);
+
+                    app.appendChild(node);
+                });
+                // Можно добавить обработку успешного создания задачи, если нужно
+            } else {
+
+                // Обработка ошибок, если не удалось создать задачу
+            }
+        }
+    };
+    xhr.send();
+});
+
+
+
+     function getCookie(name) {
+    var value = "; " + document.cookie;
+    var parts = value.split("; " + name + "=");
+    if (parts.length === 2) {
+        return parts.pop().split(";").shift();
+        }
+    }
+</script>
+</html>

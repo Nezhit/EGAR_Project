@@ -80,6 +80,11 @@ public class HRController {
         return ResponseEntity.ok(hrService.findLinkedChanges(id));
 
     }
+    @GetMapping("/tasks")
+    @PreAuthorize(" hasRole('MODERATOR') ")
+    public String searchtasks(){
+        return "tasks";
+    }
 
     @GetMapping("/subscribe")
     public SseEmitter subscribe() {
