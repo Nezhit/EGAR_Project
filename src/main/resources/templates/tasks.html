@@ -38,6 +38,29 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     };
     xhr.send();
+    // Добавляем обработчик события click для элементов <p>
+    app.addEventListener("click", function(event) {
+        if (event.target.tagName === "P") {
+            let taskId = event.target.id;
+            let taskUrl = "/hrpanel/testtask/" + taskId;
+            let taskXhr = new XMLHttpRequest();
+            taskXhr.open("GET", taskUrl, true);
+            taskXhr.setRequestHeader("Authorization", "Bearer " + accessToken);
+            taskXhr.setRequestHeader("Content-Type", "application/json");
+            taskXhr.onreadystatechange = function() {
+                if (taskXhr.readyState === XMLHttpRequest.DONE) {
+                    if (taskXhr.status === 200) {
+                        var taskResponse = JSON.parse(taskXhr.responseText);
+                        console.log("Успешный ответ:", taskResponse);
+                        // Делаем что-то с полученным JSON
+                    } else {
+                        // Обработка ошибок
+                    }
+                }
+            };
+            taskXhr.send();
+        }
+    });
 });
 
 
