@@ -3,9 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        th, td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: left;
+        }
+    </style>
 </head>
 <body>
-Tasks
+<div id="tasks">Tasks:</div>
 <div id="root"></div>
 </body>
 <script>
@@ -19,26 +31,28 @@ document.addEventListener("DOMContentLoaded", function () {
     xhr.onreadystatechange = function() {
         if (xhr.readyState === XMLHttpRequest.DONE) {
             if (xhr.status === 200) {
-
                 var response = JSON.parse(xhr.responseText);
                 console.log("Успешный ответ:", response);
                 response.forEach((obj) => {
-                    const node = document.createElement("P");
+                    const node = document.createElement("p");
                     const textNode = document.createTextNode(obj.description);
                     node.appendChild(textNode);
                     node.setAttribute("id", obj.id);
 
                     app.appendChild(node);
                 });
-                // Можно добавить обработку успешного создания задачи, если нужно
             } else {
-
-                // Обработка ошибок, если не удалось создать задачу
+                // Обработка ошибок, если не удалось получить задачи
             }
         }
     };
     xhr.send();
-    // Добавляем обработчик события click для элементов <p>
+     // Обработчик события для элемента "Tasks"
+    document.getElementById("tasks").addEventListener("click", function(event) {
+        if (event.target.tagName === "DIV") {
+            location.reload(); // Перезагрузка страницы
+        }
+    });
     app.addEventListener("click", function(event) {
         if (event.target.tagName === "P") {
             let taskId = event.target.id;
@@ -52,7 +66,33 @@ document.addEventListener("DOMContentLoaded", function () {
                     if (taskXhr.status === 200) {
                         var taskResponse = JSON.parse(taskXhr.responseText);
                         console.log("Успешный ответ:", taskResponse);
-                        // Делаем что-то с полученным JSON
+
+                        // Создаем таблицу
+                        const table = document.createElement("table");
+
+                        // Создаем заголовок таблицы
+                        const headerRow = document.createElement("tr");
+                        Object.keys(taskResponse[0]).forEach((key) => {
+                            const th = document.createElement("th");
+                            th.textContent = key;
+                            headerRow.appendChild(th);
+                        });
+                        table.appendChild(headerRow);
+
+                        // Добавляем строки с данными
+                        taskResponse.forEach((task) => {
+                            const row = document.createElement("tr");
+                            Object.values(task).forEach((value) => {
+                                const td = document.createElement("td");
+                                td.textContent = value;
+                                row.appendChild(td);
+                            });
+                            table.appendChild(row);
+                        });
+
+                        // Очищаем содержимое элемента "root" и добавляем таблицу
+                        app.innerHTML = "";
+                        app.appendChild(table);
                     } else {
                         // Обработка ошибок
                     }
@@ -63,14 +103,12 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 });
 
-
-
-     function getCookie(name) {
+function getCookie(name) {
     var value = "; " + document.cookie;
     var parts = value.split("; " + name + "=");
     if (parts.length === 2) {
         return parts.pop().split(";").shift();
-        }
     }
+}
 </script>
 </html>

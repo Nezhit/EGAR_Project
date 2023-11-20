@@ -5,10 +5,13 @@ import com.example.EgarProject.models.Task;
 import com.example.EgarProject.models.TaskCon;
 import com.example.EgarProject.models.User;
 import com.example.EgarProject.models.enums.ETaskCon;
+import com.example.EgarProject.pojo.ChangedTasksDTO;
+import com.example.EgarProject.pojo.ReplaceUserRequest;
 import com.example.EgarProject.pojo.TaskCreationRequest;
 import com.example.EgarProject.repos.TaskConRepo;
 import com.example.EgarProject.repos.TaskRepo;
 import com.example.EgarProject.repos.UserRepo;
+import com.example.EgarProject.services.ChangeConService;
 import com.example.EgarProject.services.HRService;
 import com.example.EgarProject.services.TaskService;
 import com.example.EgarProject.services.UserInfo;
@@ -26,10 +29,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.io.IOException;
@@ -48,6 +48,9 @@ public class HRController {
     TaskService taskService;
     @Autowired
     UserInfo userInfo;
+    @Autowired
+    ChangeConService changeConService;
+
     @Autowired
     TaskRepo taskRepo;
     @Autowired
@@ -74,11 +77,18 @@ public class HRController {
     }
     @GetMapping("/hrpanel/testtask/{id}")
     @PreAuthorize(" hasRole('MODERATOR') ")
-    public ResponseEntity<List<ChangeJournal>> changeJournalWithTaskId(Model model, @PathVariable("id") Long id){
+    public ResponseEntity<List<ChangedTasksDTO>> changeJournalWithTaskId(Model model, @PathVariable("id") Long id){
 
         //model.addAttribute("tasks",hrService.getTasksWithChanges());
-        return ResponseEntity.ok(hrService.findLinkedChanges(id));
+       // return ResponseEntity.ok(hrService.findLinkedChanges(id));
+        return ResponseEntity.ok(changeConService.getTaskChangesAndUsers(id));
+    }
+    @PatchMapping ("/hrpanel/replace")
+    @PreAuthorize(" hasRole('MODERATOR') ")
+    public ResponseEntity<String> replaceUserToTask(@RequestBody ReplaceUserRequest replaceUserRequest){
 
+
+        return changeConService.replaceUser(replaceUserRequest);
     }
     @GetMapping("/tasks")
     @PreAuthorize(" hasRole('MODERATOR') ")

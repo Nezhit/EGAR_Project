@@ -6,23 +6,34 @@ import com.example.EgarProject.models.TaskCon;
 import com.example.EgarProject.models.User;
 import com.example.EgarProject.models.enums.ETaskCon;
 import com.example.EgarProject.pojo.ChangeConRequest;
+import com.example.EgarProject.pojo.ChangedTasksDTO;
+import com.example.EgarProject.pojo.ReplaceUserRequest;
 import com.example.EgarProject.repos.ChangeJournalRepo;
 import com.example.EgarProject.repos.TaskConRepo;
 import com.example.EgarProject.repos.TaskRepo;
+import com.example.EgarProject.repos.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class ChangeConService {
     @Autowired
     TaskRepo taskRepo;
     @Autowired
+    UserRepo userRepo;
+    @Autowired
     ChangeJournalRepo changeJournalRepo;
+    @Autowired
+    HRService hrService;
     @Autowired
     TaskConRepo taskConRepo;
     public void fixChanges(ChangeConRequest changeConRequest,Optional<User> user){
@@ -58,7 +69,49 @@ public class ChangeConService {
             // Сохраните объект ChangeJournal в базе данных
             changeJournalRepo.save(changeJournal);
         } else {
-            // Обработка ситуации, когда задача или пользователь не найдены в базе данных
+            // Обработка дописать!
         }
     }
+    public List<ChangedTasksDTO> getTaskChangesAndUsers(Long id){
+        List<ChangedTasksDTO> changeJournalDTOs = hrService.findLinkedChanges(id).stream()
+                .map(changeJournal -> {
+                    ChangedTasksDTO dto = new ChangedTasksDTO();
+                    dto.setId(changeJournal.getId());
+                    dto.setChangeTime(changeJournal.getChangeTime());
+                    dto.setChangeText(changeJournal.getChangeText());
+                    dto.setTaskDescription(changeJournal.getTaskDescription());
+                    dto.setUsername(changeJournal.getUser().getUsername()); // Получаем имя пользователя
+                    return dto;
+                })
+                .collect(Collectors.toList());
+        return changeJournalDTOs;
+    }
+    @Transactional
+    public ResponseEntity<String> replaceUser(ReplaceUserRequest replaceUserRequest) {
+        Optional<User> userOptional = userRepo.findByUsername(replaceUserRequest.getUsername());
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
+            List<ChangeJournal> changeJournals = changeJournalRepo.findByTaskId(replaceUserRequest.getTaskId());
+
+            // Проверяем, что задача и записи существуют
+            if (!changeJournals.isEmpty()) {
+                // Изменяем пользователя для каждой записи
+                for (ChangeJournal changeJournal : changeJournals) {
+                    changeJournal.setUser(user);
+                }
+
+                // Сохраняем изменения в базе данных
+                changeJournalRepo.saveAll(changeJournals);
+            } else {
+                // Обработка случая, когда нет записей по задаче
+                return ResponseEntity.ok("Нет записей по задаче");
+            }
+        } else {
+            // Обработка случая, когда пользователь не найден
+            throw new RuntimeException("User с именем "+replaceUserRequest.getUsername()+" не найден");
+
+        }
+        return ResponseEntity.ok("Пользователь у задачи успешно сменен");
+    }
+
 }
