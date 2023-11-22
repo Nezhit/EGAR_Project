@@ -14,6 +14,16 @@
             padding: 8px;
             text-align: left;
         }
+        .popup {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background-color: white;
+        padding: 20px;
+        border: 1px solid black;
+        z-index: 9999;
+    }
     </style>
 </head>
 <body>
@@ -82,11 +92,58 @@ document.addEventListener("DOMContentLoaded", function () {
                         // Добавляем строки с данными
                         taskResponse.forEach((task) => {
                             const row = document.createElement("tr");
-                            Object.values(task).forEach((value) => {
-                                const td = document.createElement("td");
-                                td.textContent = value;
-                                row.appendChild(td);
-                            });
+                            Object.values(task).forEach((value, index) => {
+        const td = document.createElement("td");
+        td.textContent = value;
+        row.appendChild(td);
+
+        // Добавляем обработчик события для последнего столбца
+        if (index === Object.values(task).length - 1) {
+            td.addEventListener("click", function() {
+                // Создаем всплывающее окно
+                const popup = document.createElement("div");
+                popup.classList.add("popup");
+
+                // Добавляем текстовые поля
+                const input1 = document.createElement("input");
+                input1.type = "text";
+                popup.appendChild(input1);
+
+                const input2 = document.createElement("input");
+                input2.type = "text";
+                popup.appendChild(input2);
+
+                // Добавляем кнопку
+                const button = document.createElement("button");
+                button.textContent = "Отправить";
+                button.addEventListener("click", function() {
+                    // Отправляем POST-запрос
+                    const xhr = new XMLHttpRequest();
+                    xhr.open("PATCH", "/hrpanel/replace", true);
+                    xhr.setRequestHeader("Authorization", "Bearer " + accessToken);
+                    xhr.setRequestHeader("Content-Type", "application/json");
+                    xhr.onreadystatechange = function() {
+                        if (xhr.readyState === XMLHttpRequest.DONE) {
+                            if (xhr.status === 200) {
+                                // Обработка успешного ответа
+                            } else {
+                                // Обработка ошибок
+                            }
+                        }
+                    };
+                    const requestBody = {
+                        taskId: input1.value,
+                        username: input2.value
+                    };
+                    xhr.send(JSON.stringify(requestBody));
+                });
+                popup.appendChild(button);
+
+                // Добавляем всплывающее окно на страницу
+                document.body.appendChild(popup);
+            });
+        }
+    });
                             table.appendChild(row);
                         });
 
