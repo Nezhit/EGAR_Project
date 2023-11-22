@@ -17,6 +17,7 @@ import com.example.EgarProject.services.TaskService;
 import com.example.EgarProject.services.UserInfo;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
+import jakarta.validation.Valid;
 import jakarta.websocket.server.PathParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -29,6 +30,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
@@ -40,7 +42,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 @Controller
-
+@Validated
 public class HRController {
     @Autowired
     HRService hrService;
@@ -168,7 +170,7 @@ public class HRController {
     @PostMapping("/create-task")
     @Transactional
     @PreAuthorize(" hasRole('MODERATOR') ")
-    public ResponseEntity<String> createTask( @RequestBody TaskCreationRequest taskCreationRequest){
+    public ResponseEntity<String> createTask(@Valid @RequestBody TaskCreationRequest taskCreationRequest){
         hrService.createTask(taskCreationRequest);
 
         return ResponseEntity.ok("Task created");

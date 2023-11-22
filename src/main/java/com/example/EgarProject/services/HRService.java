@@ -12,6 +12,10 @@ import com.example.EgarProject.repos.ChangeJournalRepo;
 import com.example.EgarProject.repos.TaskConRepo;
 import com.example.EgarProject.repos.TaskRepo;
 import com.example.EgarProject.repos.UserRepo;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.ConstraintViolationException;
+import jakarta.validation.Valid;
+import jakarta.validation.Validator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -37,7 +41,8 @@ public class HRService {
     private TaskConRepo taskConRepo;
     @Autowired
     private ChangeJournalRepo changeJournalRepo;
-
+    @Autowired
+    private Validator validator;
     private final CopyOnWriteArrayList<SseEmitter> emitters = new CopyOnWriteArrayList<>();
     public List<User> HRFindEmployee() {
 
@@ -88,7 +93,7 @@ public class HRService {
 
         return taskRepo.findAll();
     }
-    public void createTask(TaskCreationRequest taskCreationRequest){
+    public void createTask(@Valid TaskCreationRequest taskCreationRequest){
         Task task=new Task();
         Set<TaskCon> taskCons=new HashSet<>();
         TaskCon newTaskCon=new TaskCon(ETaskCon.TODO);
@@ -98,6 +103,12 @@ public class HRService {
         task.setTaskCon(taskCons);
         task.setDescription(taskCreationRequest.getDescription());
         task.setDeadline(taskCreationRequest.getDeadline());
+        // Проверка валидации
+        Set<ConstraintViolation<Task>> violations = validator.validate(task);
+        if (!violations.isEmpty()) {
+            // Обработка ошибок валидации (можете выбрать нужный способ)
+            throw new ConstraintViolationException(violations);
+        }
         taskRepo.save(task);
 
     }
