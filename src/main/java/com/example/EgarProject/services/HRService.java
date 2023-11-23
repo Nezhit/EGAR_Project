@@ -102,11 +102,11 @@ public class HRService {
     public void createTask(@Valid TaskCreationRequest taskCreationRequest){
         Task task=new Task();
         Set<TaskCon> taskCons=new HashSet<>();
-        //TaskCon newTaskCon=new TaskCon(ETaskCon.TODO);
+
         TaskCon newTaskCon=taskConRepo.findByCondition(ETaskCon.TODO).get();
         taskCons.add(newTaskCon);
 
-        //taskConRepo.save(newTaskCon);
+
 
         task.setTaskCon(taskCons);
         task.setDescription(taskCreationRequest.getDescription());

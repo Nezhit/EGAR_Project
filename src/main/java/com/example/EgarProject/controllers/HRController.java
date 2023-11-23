@@ -44,28 +44,32 @@ import java.util.concurrent.Executors;
 @Controller
 @Validated
 public class HRController {
-    @Autowired
-    HRService hrService;
-    @Autowired
-    TaskService taskService;
-    @Autowired
-    UserInfo userInfo;
-    @Autowired
-    UserRepo userRepo;
-    @Autowired
-    ChangeConService changeConService;
+    private final HRService hrService;
+    private final TaskService taskService;
+    private final UserInfo userInfo;
+    private final UserRepo userRepo;
+    private final ChangeConService changeConService;
+    private final TaskRepo taskRepo;
+    private final TaskConRepo taskConRepo;
 
-    @Autowired
-    TaskRepo taskRepo;
-    @Autowired
-    TaskConRepo taskConRepo;
+
+    public HRController(HRService hrService, TaskService taskService, UserInfo userInfo,
+                        UserRepo userRepo, ChangeConService changeConService,
+                        TaskRepo taskRepo, TaskConRepo taskConRepo) {
+        this.hrService = hrService;
+        this.taskService = taskService;
+        this.userInfo = userInfo;
+        this.userRepo = userRepo;
+        this.changeConService = changeConService;
+        this.taskRepo = taskRepo;
+        this.taskConRepo = taskConRepo;
+    }
     private final CopyOnWriteArrayList<SseEmitter> emitters = new CopyOnWriteArrayList<>();
     @Async
     @GetMapping("/hrpanel")
     @PreAuthorize(" hasRole('MODERATOR') ")
     public String HRtaskPanel(Model model){
-        //List<User> users = hrService.HRFindEmployee();
-        //hrService.checkTaskDeadlines();
+
         List<User> users=hrService.HRFindEmployee();
         model.addAttribute("users", users);
 
@@ -83,8 +87,7 @@ public class HRController {
     @PreAuthorize(" hasRole('MODERATOR') ")
     public ResponseEntity<List<ChangedTasksDTO>> changeJournalWithTaskId(Model model, @PathVariable("id") Long id){
 
-        //model.addAttribute("tasks",hrService.getTasksWithChanges());
-       // return ResponseEntity.ok(hrService.findLinkedChanges(id));
+
         return ResponseEntity.ok(changeConService.getTaskChangesAndUsers(id));
     }
     @PatchMapping ("/hrpanel/replace")
@@ -149,9 +152,7 @@ public class HRController {
             return "createTaskPanel";
         } else if (authorities.contains(new SimpleGrantedAuthority("ROLE_USER"))) {
             // Логика для пользователя (список задач)
-            // Получите список задач, которые пользователь может видеть и передайте его в модель
-            // ...
-            // model.addAttribute("tasks", tasks);
+
             List<Task>freeTasks= taskService.findTaskWithoutUser() ;
             model.addAttribute("freeTasks",freeTasks);
 
@@ -179,7 +180,7 @@ public class HRController {
     }
     @GetMapping("getuserstat")
     public ResponseEntity<String> getUserStat(){
-        //userInfo.calculateCompletionPercentage(userRepo.findByUsername("user3").get());
+
         return ResponseEntity.ok("Статистика нашлась "+
                 userInfo.calculateCompletionPercentage(userRepo.findByUsername("user3").get())+
                 " Среднее время выполнения задачи  "+

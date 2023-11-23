@@ -52,11 +52,7 @@ public class AccountController {
             }
         }
 
-        //System.out.println("ДЛЯ ФРОНТА! " +tasks.stream().iterator().next().getChangeTime());
-        //tasks.forEach(task->task.getTask().getTaskCon().forEach(con->con.g));
-       // tasks.forEach(task -> System.out.println("INFORMATION "+task.getUser().getUsername()+" "+task.getTask().getDescription()+" "+task.getTask().getTaskCon()+" "+task.getChangeText()+" "+task.getChangeTime()));
-        //tasks.forEach(taskk->taskk.getTask().getTaskCon().forEach(taskcon -> System.out.println(taskcon.getCondition() ) ));
-        return "account";
+          return "account";
     }
     @PostMapping("/account")
     @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")

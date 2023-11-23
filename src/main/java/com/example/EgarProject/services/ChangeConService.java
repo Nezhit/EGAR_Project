@@ -26,16 +26,21 @@ import java.util.stream.Collectors;
 
 @Service
 public class ChangeConService {
-    @Autowired
-    TaskRepo taskRepo;
-    @Autowired
-    UserRepo userRepo;
-    @Autowired
-    ChangeJournalRepo changeJournalRepo;
-    @Autowired
-    HRService hrService;
-    @Autowired
-    TaskConRepo taskConRepo;
+    private final TaskRepo taskRepo;
+    private final UserRepo userRepo;
+    private final ChangeJournalRepo changeJournalRepo;
+    private final HRService hrService;
+    private final TaskConRepo taskConRepo;
+
+    // Конструктор для внедрения зависимостей
+    public ChangeConService(TaskRepo taskRepo, UserRepo userRepo, ChangeJournalRepo changeJournalRepo,
+                            HRService hrService, TaskConRepo taskConRepo) {
+        this.taskRepo = taskRepo;
+        this.userRepo = userRepo;
+        this.changeJournalRepo = changeJournalRepo;
+        this.hrService = hrService;
+        this.taskConRepo = taskConRepo;
+    }
     public void fixChanges(ChangeConRequest changeConRequest,Optional<User> user){
         Optional<Task> oneTask = taskRepo.findById(changeConRequest.getTaskId());
 
