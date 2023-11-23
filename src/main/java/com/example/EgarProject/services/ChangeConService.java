@@ -59,6 +59,7 @@ public class ChangeConService {
                     break;
                 case "section4":
                     taskCons.add(taskConRepo.findByCondition(ETaskCon.DONE).get());
+                    task.setEnded(LocalDateTime.now());
                     break;
             }
 

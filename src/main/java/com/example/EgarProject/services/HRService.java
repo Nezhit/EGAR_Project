@@ -33,17 +33,23 @@ import java.util.stream.Collectors;
 
 @Service
 public class HRService {
-    @Autowired
-    private UserRepo userRepo;
-    @Autowired
-    private TaskRepo taskRepo;
-    @Autowired
-    private TaskConRepo taskConRepo;
-    @Autowired
-    private ChangeJournalRepo changeJournalRepo;
-    @Autowired
-    private Validator validator;
+    private final UserRepo userRepo;
+    private final TaskRepo taskRepo;
+    private final TaskConRepo taskConRepo;
+    private final ChangeJournalRepo changeJournalRepo;
+    private final Validator validator;
     private final CopyOnWriteArrayList<SseEmitter> emitters = new CopyOnWriteArrayList<>();
+
+    @Autowired
+    public HRService(UserRepo userRepo, TaskRepo taskRepo, TaskConRepo taskConRepo,
+                     ChangeJournalRepo changeJournalRepo, Validator validator) {
+        this.userRepo = userRepo;
+        this.taskRepo = taskRepo;
+        this.taskConRepo = taskConRepo;
+        this.changeJournalRepo = changeJournalRepo;
+        this.validator = validator;
+    }
+
     public List<User> HRFindEmployee() {
 
         List<ERole> excludedRoles = Arrays.asList(ERole.ROLE_MODERATOR, ERole.ROLE_ADMIN);
@@ -96,10 +102,12 @@ public class HRService {
     public void createTask(@Valid TaskCreationRequest taskCreationRequest){
         Task task=new Task();
         Set<TaskCon> taskCons=new HashSet<>();
-        TaskCon newTaskCon=new TaskCon(ETaskCon.TODO);
+        //TaskCon newTaskCon=new TaskCon(ETaskCon.TODO);
+        TaskCon newTaskCon=taskConRepo.findByCondition(ETaskCon.TODO).get();
         taskCons.add(newTaskCon);
-        //taskConRepo.saveTaskCon(newTaskCon.getCondition());
-        taskConRepo.save(newTaskCon);
+
+        //taskConRepo.save(newTaskCon);
+
         task.setTaskCon(taskCons);
         task.setDescription(taskCreationRequest.getDescription());
         task.setDeadline(taskCreationRequest.getDeadline());

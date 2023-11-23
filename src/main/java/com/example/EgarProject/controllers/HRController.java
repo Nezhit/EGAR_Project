@@ -51,6 +51,8 @@ public class HRController {
     @Autowired
     UserInfo userInfo;
     @Autowired
+    UserRepo userRepo;
+    @Autowired
     ChangeConService changeConService;
 
     @Autowired
@@ -175,6 +177,15 @@ public class HRController {
 
         return ResponseEntity.ok("Task created");
     }
-
+    @GetMapping("getuserstat")
+    public ResponseEntity<String> getUserStat(){
+        //userInfo.calculateCompletionPercentage(userRepo.findByUsername("user3").get());
+        return ResponseEntity.ok("Статистика нашлась "+
+                userInfo.calculateCompletionPercentage(userRepo.findByUsername("user3").get())+
+                " Среднее время выполнения задачи  "+
+                userInfo.calculateAverageTaskCompletionTime(userRepo.findByUsername("user3").get()) +
+                " Комитов в день " +
+                userInfo.calculateTaskChangeFrequencyPerDay(userRepo.findByUsername("user3").get()));
+    }
 
 }

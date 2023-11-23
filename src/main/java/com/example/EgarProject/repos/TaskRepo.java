@@ -36,6 +36,8 @@ public interface TaskRepo extends JpaRepository<Task,Long> {
     @Query("SELECT t FROM Task t LEFT JOIN t.changes c WHERE c.task IS NULL OR (t.id IS NOT NULL AND c.id IS NULL)")
     List<Task> findTasksWithoutUser();
     // Поиск задач по состоянию (TaskCon)
+    @Query("SELECT DISTINCT t FROM Task t JOIN t.changes c WHERE c.user = :user")
+    List<Task> findTasksByUser(@Param("user") User user);
     Optional<Task> findByTaskCons(TaskCon taskCon);
 
     // Поиск задач, связанных с конкретным пользователем

@@ -15,11 +15,18 @@
         <th>ID</th>
         <th>Username</th>
         <th>Email</th>
+        <th>% Выполненных задач</th>
+        <th>Среднее время выполнения задачи</th>
+        <th>Частота коммитов</th>
     </tr>
     <tr th:each="user : ${users}">
         <td th:text="${user.id}"></td>
         <td th:text="${user.username}"></td>
         <td th:text="${user.email}"></td>
+
+        <td th:text="${@userInfo.calculateCompletionPercentage(user)}"></td>
+        <td th:text="${@userInfo.calculateAverageTaskCompletionTime(user)}"></td>
+        <td th:text="${@userInfo.calculateTaskChangeFrequencyPerDay(user)}"></td>
     </tr>
     <tr th:if="${#lists.isEmpty(users)}">
         <td colspan="3">User list is empty</td>
