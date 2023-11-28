@@ -1,5 +1,6 @@
 package com.example.EgarProject.models;
 
+import com.example.EgarProject.models.enums.ESpecialization;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
@@ -17,7 +18,14 @@ public class User {
     private String username;
     @Column(unique = true)
     private String email;
+    @Column(name = "password")
     private String password;
+    @Column(name = "name")
+    private String name;
+    @Column(name = "surname")
+    private String surname;
+    @Column(name = "papaname")
+    private String papaname;
     @JsonIgnore
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name="user_roles",
@@ -28,14 +36,71 @@ public class User {
     //--------------------------
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private Set<ChangeJournal> changes = new HashSet<>();
+    @Enumerated(EnumType.STRING)
+    @Column(name = "specialization")
+    private ESpecialization specialization;
+    @ManyToOne
+    @JoinColumn(name = "team_id")
+    private Team team;
 
     public User() {
     }
 
-    public User(String username, String email, String password) {
+    public User(String username, String email, String password,ESpecialization specialization) {
         this.username = username;
         this.email = email;
         this.password = password;
+        this.specialization=specialization;
+    }
+
+    public User(String username, String email, String password, String name, String surname, String papaname, ESpecialization specialization) {
+        this.username = username;
+        this.email = email;
+        this.password = password;
+        this.name = name;
+        this.surname = surname;
+        this.papaname = papaname;
+        this.specialization = specialization;
+    }
+
+    public ESpecialization getSpecialization() {
+        return specialization;
+    }
+
+    public void setSpecialization(ESpecialization specialization) {
+        this.specialization = specialization;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public Team getTeam() {
+        return team;
+    }
+
+    public void setTeam(Team team) {
+        this.team = team;
+    }
+
+    public String getSurname() {
+        return surname;
+    }
+
+    public void setSurname(String surname) {
+        this.surname = surname;
+    }
+
+    public String getPapaname() {
+        return papaname;
+    }
+
+    public void setPapaname(String papaname) {
+        this.papaname = papaname;
     }
 
     public Long getId() {

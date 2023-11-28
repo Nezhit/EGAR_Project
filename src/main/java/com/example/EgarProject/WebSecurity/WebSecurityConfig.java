@@ -71,8 +71,10 @@ public class WebSecurityConfig  {
                 .authorizeHttpRequests(req->req
                         .requestMatchers("/api/v1/management/**").permitAll()
                         .requestMatchers("/api/auth/signin").permitAll()
+                        .requestMatchers("/api/notifications/**").permitAll()
                         .requestMatchers("/api/auth/signup").permitAll()
                         .requestMatchers("/hrpanel/**").hasRole("MODERATOR")
+
                         .requestMatchers("/", "/home","/uno","/subscribe","/subscribes").permitAll()//
                         .anyRequest().authenticated()
 
