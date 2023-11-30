@@ -72,6 +72,7 @@ public class WebSecurityConfig  {
                         .requestMatchers("/api/v1/management/**").permitAll()
                         .requestMatchers("/api/auth/signin").permitAll()
                         .requestMatchers("/api/notifications/**").permitAll()
+                        .requestMatchers("/api/notifications/subscribe").permitAll()
                         .requestMatchers("/api/auth/signup").permitAll()
                         .requestMatchers("/hrpanel/**").hasRole("MODERATOR")
 

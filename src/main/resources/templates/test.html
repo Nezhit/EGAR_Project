@@ -10,9 +10,13 @@ TEST
 <script>
     // Инициализация SSE
     var accessToken = getCookie("Authorization");
-    const eventSource = new EventSource('/api/notifications/subscribe',{headers:{'Authorization':'Bearer '+accessToken}});
+    const username = getCookie("username");
+
+    const eventSource = new EventSource('/api/notifications/subscribe',{headers:{'Authorization':'Bearer '+accessToken,
+        'X-username': username}});
 
     // Обработка событий от сервера
+
     eventSource.addEventListener('notification', event => {
         const message = JSON.parse(event.data);
         alert('Received notification:', message);

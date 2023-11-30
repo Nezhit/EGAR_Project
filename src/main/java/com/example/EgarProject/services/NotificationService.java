@@ -3,6 +3,8 @@ package com.example.EgarProject.services;
 import com.example.EgarProject.models.Notification;
 import com.example.EgarProject.models.User;
 import com.example.EgarProject.models.enums.ENotificationType;
+import com.example.EgarProject.pojo.NotificationDTO;
+import com.example.EgarProject.pojo.SignupRequest;
 import com.example.EgarProject.repos.NotificationRepo;
 import jakarta.transaction.Transactional;
 import org.springframework.scheduling.annotation.Async;
@@ -24,12 +26,12 @@ public class NotificationService {
     public NotificationService(NotificationRepo notificationRepo) {
         this.notificationRepo = notificationRepo;
     }
-    private final Map<Long, SseEmitter> emitters = new ConcurrentHashMap<>();
+    private final Map<String, SseEmitter> emitters = new ConcurrentHashMap<>();
 
-    public SseEmitter subscribe() {
+    public SseEmitter subscribe(String username) {
         SseEmitter emitter = new SseEmitter();
        // emitters.put(ThreadLocalRandom.current().nextLong(), emitter);
-        emitters.put(3L, emitter);
+        emitters.put(username, emitter);
         // Удаление эмиттера при разрыве соединения
         emitter.onCompletion(() -> emitters.values().remove(emitter));
         emitter.onTimeout(() -> emitters.values().remove(emitter));
@@ -38,13 +40,13 @@ public class NotificationService {
     }
     @Transactional
     @Async
-    public void sendNotification(Long userId, String message) {
-        SseEmitter emitter = emitters.get(userId);
+    public void sendNotification(NotificationDTO notificationDTO) {
+        SseEmitter emitter = emitters.get(notificationDTO.getUsername());
         if (emitter != null) {
             try {
                 emitter.send(SseEmitter.event()
                         .name("notification")
-                        .data(message));
+                        .data(notificationDTO.getMessage()));
             } catch (IOException e) {
                 // Обработка ошибок
             }

@@ -42,25 +42,25 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class TeamServiceTests {
     @Autowired
     private TeamRepo teamRepo;
-    @Autowired
-    private JdbcTemplate jdbcTemplate;
+
 
     @Autowired
     private UserRepo userRepo;
 
     @Autowired
     private TeamService teamService;
+    @Transactional
     @Test
-
+    @Order(1)
     public  void loadPostgresDumpIntoH2() {
         //посмотреть точно ли из H2 берутся данные + доп проверки сделать
 
         userRepo.findAll().stream().forEach(user -> System.out.println(user.getUsername()));
     }
 
-
+    @Transactional
     @Test
-
+    @Order(2)
     public void testCreateTeam() {
 
         BindingResult bindingResult = new MapBindingResult(new HashMap<>(), "taskLeadRequest");
@@ -78,7 +78,9 @@ public class TeamServiceTests {
         teamRepo.findAll().forEach(team -> System.out.println(team.getId()+" = "+ team.getName()));
 
     }
+    @Transactional
     @Test
+    @Order(4)
     public void us(){
         User user= new User();
         user.setPassword("$2a$10$3uVm5kNjNakctk1dbfI3ROOlKqunBAZgrISaSG/Bsjkh4dv5jZQNa");
@@ -87,9 +89,9 @@ public class TeamServiceTests {
         userRepo.saveAndFlush(user);
         userRepo.findAll().forEach(user1 -> System.out.println(user1.getUsername()));
     }
-
+    @Transactional
     @Test
-
+    @Order(3)
     public void testAppointLead() {
         // создаем тестовые данные
         TaskLeadRequest taskLeadRequest = createTestTaskLeadRequest(1);

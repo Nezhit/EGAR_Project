@@ -20,7 +20,7 @@ INSERT INTO users (username, email, password, name, surname, papaname, specializ
     ('user7', 'user7@mail.ru', '$2a$10$DH3Sx6OP.J5C0YdsTESgmuPoCE/MJzKC0i9I81F8B4T4wDAGA8QEe', 'Tom', 'Johnson', 'PapaTom', 'TEAM_LEAD');
 
 INSERT INTO teams (  team_lead_id,name) VALUES
-    (4,'Team1');
+    (5,'Team1');
 
 
 INSERT INTO tasks (created, deadline, ended, description) VALUES
