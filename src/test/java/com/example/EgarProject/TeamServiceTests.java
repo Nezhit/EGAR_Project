@@ -8,34 +8,23 @@ import com.example.EgarProject.repos.UserRepo;
 import com.example.EgarProject.services.TeamService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.transaction.Transactional;
+import jakarta.validation.Valid;
 import org.junit.Test;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Order;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.domain.EntityScan;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.test.annotation.Commit;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.jdbc.Sql;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.MapBindingResult;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
@@ -62,7 +51,7 @@ public class TeamServiceTests {
     @Autowired
     private TeamService teamService;
     @Test
-    @Order(0)
+
     public  void loadPostgresDumpIntoH2() {
         //посмотреть точно ли из H2 берутся данные + доп проверки сделать
 
@@ -71,23 +60,36 @@ public class TeamServiceTests {
 
 
     @Test
-    @Order(3)
+
     public void testCreateTeam() {
-        // создаем тестовые данные
-        TeamDTO teamDTO = createTestTeamDTO();
-        BindingResult bindingResult = new MapBindingResult(new HashMap<>(), "teamDTO");
 
-        // вызываем метод сервиса для создания команды
-        ResponseEntity<String> responseEntity = teamService.createTeam(teamDTO, bindingResult);
+        BindingResult bindingResult = new MapBindingResult(new HashMap<>(), "taskLeadRequest");
 
-        System.out.println(responseEntity.getBody());
-        // проверяем, что команда создана успешно (HttpStatus.OK)
-        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+        TeamDTO teamDTO= createTestTeamDTO();
 
+
+//
+//        // вызываем метод сервиса для создания команды
+
+         teamService.createTeam(teamDTO, bindingResult);
+         teamDTO.setTeamLead(userRepo.findByUsername("user7").get());
+        teamDTO.setName("titit");
+        teamService.createTeam(teamDTO, bindingResult);
+        teamRepo.findAll().forEach(team -> System.out.println(team.getId()+" = "+ team.getName()));
+
+    }
+    @Test
+    public void us(){
+        User user= new User();
+        user.setPassword("$2a$10$3uVm5kNjNakctk1dbfI3ROOlKqunBAZgrISaSG/Bsjkh4dv5jZQNa");
+        user.setName("user9");
+        user.setEmail("user9@mail.ru");
+        userRepo.saveAndFlush(user);
+        userRepo.findAll().forEach(user1 -> System.out.println(user1.getUsername()));
     }
 
     @Test
-    @Order(2)
+
     public void testAppointLead() {
         // создаем тестовые данные
         TaskLeadRequest taskLeadRequest = createTestTaskLeadRequest(1);
@@ -114,17 +116,50 @@ public class TeamServiceTests {
     }
 
     private TeamDTO createTestTeamDTO() {
-        TeamDTO teamDTO=new TeamDTO();
-        teamDTO.setName("Team3");
-        Set<User> users= new HashSet<>();
-        users.add(userRepo.findByUsername("user").get());
-        users.add(userRepo.findByUsername("user2").get());
-        users.add(userRepo.findByUsername("user3").get());
-        teamDTO.setTeamLead(userRepo.findByUsername("user5").get());
-        teamDTO.setMembers(users);
+        String json="{\n" +
+                "  \"name\": \"Team3\",\n" +
+                "  \"members\": [\n" +
+                "    {\n" +
+                "      \"id\": 1,\n" +
+                "      \"username\": \"user\",\n" +
+                "      \"email\": \"user@mail.ru\",\n" +
+                "      \"password\": \"1234\",\n" +
+                "      \"specialization\": \"JUNIOR\"\n" +
+                "    },\n" +
+                "    {\n" +
+                "      \"id\": 2,\n" +
+                "      \"username\": \"user2\",\n" +
+                "      \"email\": \"user2@mail.ru\",\n" +
+                "      \"password\": \"1234\",\n" +
+                "      \"specialization\": \"JUNIOR\"\n" +
+                "    },\n" +
+                "    {\n" +
+                "      \"id\": 3,\n" +
+                "      \"username\": \"user3\",\n" +
+                "      \"email\": \"user3@mail.ru\",\n" +
+                "      \"password\": \"1234\",\n" +
+                "      \"specialization\": \"SENIOR\"\n" +
+                "    }\n" +
+                "  ],\n" +
+                "  \"teamLead\": {\n" +
+                "    \"id\": 6,\n" +
+                "    \"username\": \"user5\",\n" +
+                "    \"email\": \"user5@mail.ru\",\n" +
+                "    \"password\": \"1234\",\n" +
+                "    \"specialization\": \"TEAM_LEAD\"\n" +
+                "  }\n" +
+                "}\n";
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            return objectMapper.readValue(json, TeamDTO.class);
+        } catch (Exception e) {
+            // обработка ошибок при парсинге JSON
+            e.printStackTrace();
+            return null;
+        }
 
 
-        return teamDTO;
+
     }
 
     private TaskLeadRequest createTestTaskLeadRequest(int x) {

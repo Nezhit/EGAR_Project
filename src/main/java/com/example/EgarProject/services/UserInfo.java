@@ -20,10 +20,7 @@ import org.springframework.stereotype.Service;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -99,13 +96,22 @@ public class UserInfo {
         String firstCommit="Задание выбрано";
         ChangeJournal changeJournal=new ChangeJournal(taskRepo.findById(id).get(),userRepo.findByUsername(username).get(), LocalDateTime.now(),firstCommit);
         changeJournalRepo.save(changeJournal);
+        Task task=taskRepo.findById(id).get();
+        Set<TaskCon> taskCons=new HashSet<>();
+        taskCons.add(taskConRepo.findByCondition(ETaskCon.TODO).get());
+        task.setTaskCon(taskCons);
+        taskRepo.saveAndFlush(task);
         return ResponseEntity.ok("Успешно прекреплены задачи");
     }
     public double calculateCompletionPercentage(User user){
         List<Task> allUserTasks=taskRepo.findTasksByUser(user);
         allUserTasks.forEach(task -> System.out.println("Состояние= "+task.getTaskCon().stream().iterator().next().getCondition()));
         long countOfDoneTasks = allUserTasks.stream()
-                .filter(task -> task.getTaskCon().stream().iterator().next().getCondition().equals(ETaskCon.DONE))
+                .filter(task -> {
+                    Set<TaskCon> taskCons = task.getTaskCons();
+                    return taskCons != null && !taskCons.isEmpty() &&
+                            taskCons.stream().anyMatch(con -> ETaskCon.DONE.equals(con.getCondition()));
+                })
                 .count();
         System.out.println("Для челика с ником "+user.getUsername()+" выполненых задач = "+countOfDoneTasks);
         return (double) allUserTasks.size() /countOfDoneTasks;

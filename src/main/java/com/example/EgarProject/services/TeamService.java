@@ -44,7 +44,8 @@ public class TeamService {
         team.setName(teamDTO.getName());
         team.setMembers(teamDTO.getMembers());
         team.setTeamLead(teamDTO.getTeamLead());
-        teamRepo.save(team);
+
+        teamRepo.saveAndFlush(team);
         Long teamId = team.getId();
         Set<User> members = teamDTO.getMembers();
         User teamLead = teamDTO.getTeamLead();
