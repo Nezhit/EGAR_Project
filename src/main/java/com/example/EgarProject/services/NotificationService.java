@@ -4,8 +4,9 @@ import com.example.EgarProject.models.Notification;
 import com.example.EgarProject.models.User;
 import com.example.EgarProject.models.enums.ENotificationType;
 import com.example.EgarProject.pojo.NotificationDTO;
-import com.example.EgarProject.pojo.SignupRequest;
 import com.example.EgarProject.repos.NotificationRepo;
+import com.example.EgarProject.repos.UserRepo;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.transaction.Transactional;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -13,18 +14,20 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ThreadLocalRandom;
+
 @Service
 public class NotificationService {
 
     private final NotificationRepo notificationRepo;
-
-    public NotificationService(NotificationRepo notificationRepo) {
+    private final UserRepo userRepo;
+    public NotificationService(NotificationRepo notificationRepo, UserRepo userRepo) {
         this.notificationRepo = notificationRepo;
+        this.userRepo = userRepo;
     }
     private final Map<String, SseEmitter> emitters = new ConcurrentHashMap<>();
 
@@ -42,21 +45,36 @@ public class NotificationService {
     @Async
     public void sendNotification(NotificationDTO notificationDTO) {
         SseEmitter emitter = emitters.get(notificationDTO.getUsername());
+        User user=userRepo.findByUsername(notificationDTO.getUsername()).get();
+        saveNotification(user,notificationDTO.getMessage(),ENotificationType.MESSAGE_RECEIVED);
         if (emitter != null) {
             try {
+                Map<String, Object> notificationData = new HashMap<>();
+                notificationData.put("message", notificationDTO.getMessage());
+                notificationData.put("timestamp", notificationDTO.getTimestamp());
+
                 emitter.send(SseEmitter.event()
                         .name("notification")
-                        .data(notificationDTO.getMessage()));
+                        .data(new ObjectMapper().writeValueAsString(notificationData)));
+
             } catch (IOException e) {
                 // Обработка ошибок
             }
         }
     }
-    public void sendNotification(User user, String message, ENotificationType type) {
+
+    public void saveNotification(User user, String message, ENotificationType type) {
         Notification notification = new Notification(user, message, type, LocalDateTime.now());
         notificationRepo.save(notification);
 
 
+    }
+    public List<Notification> getUserNotifications(String username){
+        if(userRepo.findByUsername(username).isEmpty()){
+            throw new RuntimeException("Пользователя с таким username нет");
+        }
+
+        return notificationRepo.findByUser(userRepo.findByUsername(username).get());
     }
 
     public List<Notification> getUnreadNotifications(User user) {

@@ -1,11 +1,16 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">>
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
 </head>
 <body>
 TEST
+<div id="notification-container">
+    <div th:each="notification : ${notifications}">
+        <p th:text="${notification.message} + ' - ' + ${notification.timestamp}"></p>
+    </div>
+</div>
 </body>
 <script>
     // Инициализация SSE
@@ -19,11 +24,26 @@ TEST
 
     eventSource.addEventListener('notification', event => {
         const message = JSON.parse(event.data);
-        alert('Received notification:', message);
+
         // Обработка уведомления, например, вывод в консоль или использование Notification API
         console.log('Received notification:', message);
 
     });
+    eventSource.addEventListener('notification', event => {
+    const data = JSON.parse(event.data);
+    const notificationContainer = document.getElementById('notification-container');
+
+    // Create a new element for each notification
+    const notificationElement = document.createElement('div');
+    notificationElement.textContent = `Received notification: ${data.message} - ${data.timestamp}`;
+
+    // Add the element to the container
+    notificationContainer.appendChild(notificationElement);
+
+    // Handle the notification, e.g., log to the console or use the Notification API
+    console.log('Received notification:', data);
+});
+
 
     // Закрытие соединения при разрыве
     eventSource.addEventListener('error', () => {

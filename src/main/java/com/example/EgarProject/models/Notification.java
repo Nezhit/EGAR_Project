@@ -23,6 +23,9 @@ public class Notification {
 
     private LocalDateTime timestamp;
 
+    public Notification() {
+    }
+
     public Notification(User user, String message, ENotificationType type, LocalDateTime timestamp) {
         this.user = user;
         this.message = message;

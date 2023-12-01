@@ -1,27 +1,36 @@
 package com.example.EgarProject.controllers;
 
-import com.example.EgarProject.pojo.MessageResponse;
+import com.example.EgarProject.models.Notification;
 import com.example.EgarProject.pojo.NotificationDTO;
+import com.example.EgarProject.services.CookiesService;
 import com.example.EgarProject.services.NotificationService;
 import jakarta.servlet.http.Cookie;
 import org.springframework.http.ResponseEntity;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
+
+import java.util.List;
 
 @Controller
 @RequestMapping("/api/notifications")
 public class NotificationController {
 
     private final NotificationService notificationService;
+    private final CookiesService cookiesService;
 
-
-    public NotificationController(NotificationService notificationService) {
+    public NotificationController(NotificationService notificationService, CookiesService cookiesService) {
         this.notificationService = notificationService;
+        this.cookiesService = cookiesService;
     }
     @GetMapping("/testoviy")
-    public String testNotif(){
+    public String testNotif(Model model,jakarta.servlet.http.HttpServletRequest request){
+        String username=cookiesService.extractUsername(request);
+        List<Notification> notifications=notificationService.getUserNotifications(username);
+        model.addAttribute("notifications",notifications);
+
+
         return "test";
     }
 //    @Scheduled(fixedRate = 10000)

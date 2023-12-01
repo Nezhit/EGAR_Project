@@ -1,10 +1,12 @@
 package com.example.EgarProject;
 
 import com.example.EgarProject.models.User;
+import com.example.EgarProject.pojo.TaskCreationRequest;
 import com.example.EgarProject.pojo.TaskLeadRequest;
 import com.example.EgarProject.pojo.TeamDTO;
 import com.example.EgarProject.repos.TeamRepo;
 import com.example.EgarProject.repos.UserRepo;
+import com.example.EgarProject.services.HRService;
 import com.example.EgarProject.services.TeamService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.transaction.Transactional;
@@ -17,14 +19,17 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.jdbc.Sql;
+import org.springframework.test.context.jdbc.SqlConfig;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.MapBindingResult;
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
@@ -34,11 +39,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 
-@TestPropertySource("/hibernate-test.properties")
+
 @ActiveProfiles("test")
 @SpringBootTest(properties = {"spring.config.name=hibernate-test", "spring.profiles.active=test"})
+//@TestPropertySource("/hibernate-test.properties")
 @Transactional
-@Sql("classpath:testdata.sql")
+
 public class TeamServiceTests {
     @Autowired
     private TeamRepo teamRepo;
@@ -46,21 +52,27 @@ public class TeamServiceTests {
 
     @Autowired
     private UserRepo userRepo;
+    @Autowired
+    HRService hrService;
 
     @Autowired
     private TeamService teamService;
     @Transactional
     @Test
     @Order(1)
+    @Sql(scripts = "classpath:clean.sql", config = @SqlConfig(transactionMode = SqlConfig.TransactionMode.ISOLATED))
+    @Sql(scripts = "classpath:testdata.sql", config = @SqlConfig(transactionMode = SqlConfig.TransactionMode.ISOLATED))
     public  void loadPostgresDumpIntoH2() {
         //посмотреть точно ли из H2 берутся данные + доп проверки сделать
 
-        userRepo.findAll().stream().forEach(user -> System.out.println(user.getUsername()));
+        userRepo.findAll().stream().forEach(user -> System.out.println(user.getId()+" "+user.getUsername()));
     }
 
     @Transactional
     @Test
     @Order(2)
+    @Sql(scripts = "classpath:clean.sql", config = @SqlConfig(transactionMode = SqlConfig.TransactionMode.ISOLATED))
+    @Sql(scripts = "classpath:testdata.sql", config = @SqlConfig(transactionMode = SqlConfig.TransactionMode.ISOLATED))
     public void testCreateTeam() {
 
         BindingResult bindingResult = new MapBindingResult(new HashMap<>(), "taskLeadRequest");
@@ -81,17 +93,20 @@ public class TeamServiceTests {
     @Transactional
     @Test
     @Order(4)
-    public void us(){
-        User user= new User();
-        user.setPassword("$2a$10$3uVm5kNjNakctk1dbfI3ROOlKqunBAZgrISaSG/Bsjkh4dv5jZQNa");
-        user.setName("user9");
-        user.setEmail("user9@mail.ru");
-        userRepo.saveAndFlush(user);
-        userRepo.findAll().forEach(user1 -> System.out.println(user1.getUsername()));
+    @Sql(scripts = "classpath:clean.sql", config = @SqlConfig(transactionMode = SqlConfig.TransactionMode.ISOLATED))
+    @Sql(scripts = "classpath:testdata.sql", config = @SqlConfig(transactionMode = SqlConfig.TransactionMode.ISOLATED))
+    @DirtiesContext
+    public void usik(){
+        TaskCreationRequest taskCreationRequest=new TaskCreationRequest();
+        taskCreationRequest.setDeadline(LocalDateTime.now());
+        taskCreationRequest.setDescription("Dast");
+        hrService.createTask(taskCreationRequest);
     }
     @Transactional
     @Test
     @Order(3)
+    @Sql(scripts = "classpath:clean.sql", config = @SqlConfig(transactionMode = SqlConfig.TransactionMode.ISOLATED))
+    @Sql(scripts = "classpath:testdata.sql", config = @SqlConfig(transactionMode = SqlConfig.TransactionMode.ISOLATED))
     public void testAppointLead() {
         // создаем тестовые данные
         TaskLeadRequest taskLeadRequest = createTestTaskLeadRequest(1);
