@@ -38,7 +38,8 @@ TEST
     notificationElement.textContent = `Received notification: ${data.message} - ${data.timestamp}`;
 
     // Add the element to the container
-    notificationContainer.appendChild(notificationElement);
+    //notificationContainer.appendChild(notificationElement);
+    notificationContainer.insertBefore(notificationElement,notificationContainer.firstChild);
 
     // Handle the notification, e.g., log to the console or use the Notification API
     console.log('Received notification:', data);

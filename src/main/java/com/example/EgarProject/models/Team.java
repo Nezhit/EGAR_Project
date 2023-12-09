@@ -13,7 +13,8 @@ public class Team {
     private Long id;
 
     private String name;
-
+    @OneToMany(mappedBy = "team")
+    private Set<Task> tasks = new HashSet<>();
     @OneToMany(mappedBy = "team")
     private Set<User> members = new HashSet<>();
 
@@ -31,15 +32,24 @@ public class Team {
     public Team() {
     }
 
-    public Team(String name, Set<User> members, User teamLead) {
+    public Team(String name, Set<User> members, User teamLead,Set<Task> tasks) {
         this.name = name;
         this.members = members;
         this.teamLead = teamLead;
+        this.tasks=tasks;
     }
 
     public Team(String name, User teamLead) {
         this.name = name;
         this.teamLead = teamLead;
+    }
+
+    public Set<Task> getTasks() {
+        return tasks;
+    }
+
+    public void setTasks(Set<Task> tasks) {
+        this.tasks = tasks;
     }
 
     public void setId(Long id) {

@@ -94,7 +94,7 @@ public class HRController {
     @PreAuthorize(" hasRole('MODERATOR') ")
     public ResponseEntity<String> replaceUserToTask(@RequestBody ReplaceUserRequest replaceUserRequest){
 
-
+        boolean bool=taskService.replaceUser(replaceUserRequest);
         return changeConService.replaceUser(replaceUserRequest);
     }
     @GetMapping("/tasks")
@@ -161,6 +161,13 @@ public class HRController {
             // Логика для других ролей или неавторизованных пользователей
             return "accessDenied";
         }
+    }
+    @GetMapping("/main/{type}")
+    public String getTaskOrderderedBy(@PathVariable String type,Model model){
+
+        List<Task>freeTasks= taskService.getOrderedByTypeWithoutUser(type) ;
+        model.addAttribute("freeTasks",freeTasks);
+        return "main";
     }
     @PostMapping("/assign-task")
     public ResponseEntity<String> assignTask(@RequestBody ArrayList<Long> ids, HttpServletRequest request){

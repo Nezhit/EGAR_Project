@@ -31,6 +31,8 @@ import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
 
+import static com.ibm.java.diagnostics.utils.Context.logger;
+
 @Service
 public class HRService {
     private final UserRepo userRepo;
@@ -86,7 +88,7 @@ public class HRService {
         notifications.add(overdueTasks);
         notifications.add(tasksWithEndedLaterThanDeadline);
         notifications.add(tasksWithTwoDaysDifference);
-        System.out.println("ТУТ ОШИБКА!!");
+
 
 
 
@@ -117,6 +119,7 @@ public class HRService {
             // Обработка ошибок валидации (можете выбрать нужный способ)
             throw new ConstraintViolationException(violations);
         }
+
         taskRepo.save(task);
 
     }

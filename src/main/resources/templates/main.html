@@ -11,8 +11,10 @@
     <table>
         <thead>
         <tr>
-            <th>ID</th>
-            <th>Описание</th>
+            <th onclick="sortTable('id')">ID</th>
+            <th onclick="sortTable('description')">Описание</th>
+            <th onclick="sortTable('complexity')">Сложность</th>
+            <th onclick="sortTable('priority')">Приоритетность</th>
             <th>Выбор</th>
         </tr>
         </thead>
@@ -20,6 +22,8 @@
         <tr th:each="task : ${freeTasks}">
             <td th:text="${task.id}"></td>
             <td th:text="${task.description}"></td>
+            <td th:text="${task.complexity}"></td>
+            <td th:text="${task.priority}"></td>
             <td><input type="checkbox" name="selectedTasks" th:value="${task.id}"/></td>
         </tr>
         </tbody>
@@ -61,6 +65,29 @@
             return parts.pop().split(";").shift();
         }
     }
+    //
+     function sortTable(type) {
+
+        let fetchURL="/main/"+type;
+        var accessToken = getCookie("Authorization");
+
+        var xhr = new XMLHttpRequest();
+        xhr.open("GET", fetchURL, true);
+        xhr.setRequestHeader("Authorization", "Bearer " + accessToken);
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === 4) {
+                if (xhr.status === 200) {
+                    // Заменяем текущий HTML на полученный
+                    document.documentElement.innerHTML = xhr.responseText;
+                } else {
+                    console.error("Request failed with status:", xhr.status);
+                }
+            }
+        };
+
+
+     xhr.send();
+     }
     </script>
 </body>
 </html>

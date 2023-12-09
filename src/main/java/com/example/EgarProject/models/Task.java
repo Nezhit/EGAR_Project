@@ -1,5 +1,6 @@
 package com.example.EgarProject.models;
 
+import com.example.EgarProject.models.enums.EComplexity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonValue;
 import jakarta.persistence.*;
@@ -25,7 +26,9 @@ public class Task {
     private LocalDateTime ended;
     @Column(name = "deadline")
     private LocalDateTime deadline;
-
+    @ManyToOne(optional = true)
+    @JoinColumn(name = "team_id")
+    private Team team;
     @ManyToMany
     @JoinTable(
             name = "task_conditions", // Имя промежуточной таблицы
@@ -37,6 +40,14 @@ public class Task {
     @JsonIgnore
     @OneToMany(mappedBy = "task", cascade = CascadeType.ALL)
     private Set<ChangeJournal> changes = new HashSet<>();
+    @Column(name = "priority")
+    private int priority;
+    @Column(name = "complexity")
+    private EComplexity complexity;
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
+
     @PrePersist
     protected void onCreate() {
         created = LocalDateTime.now();
@@ -52,6 +63,62 @@ public class Task {
         this.deadline=deadline;
     }
 
+    public Task(String description, LocalDateTime created, LocalDateTime ended, LocalDateTime deadline, int priority, EComplexity complexity) {
+        this.description = description;
+        this.created = created;
+        this.ended = ended;
+        this.deadline = deadline;
+        this.priority = priority;
+        this.complexity = complexity;
+    }
+
+    public int getPriority() {
+        return priority;
+    }
+
+    public void setPriority(int priority) {
+        this.priority = priority;
+    }
+
+    public EComplexity getComplexity() {
+        return complexity;
+    }
+
+    public void setComplexity(EComplexity complexity) {
+        this.complexity = complexity;
+    }
+
+    public void setTaskCons(Set<TaskCon> taskCons) {
+        this.taskCons = taskCons;
+    }
+
+    public void setChanges(Set<ChangeJournal> changes) {
+        this.changes = changes;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public Task(String description, LocalDateTime created, LocalDateTime ended, LocalDateTime deadline, Team team) {
+        this.description = description;
+        this.created = created;
+        this.ended = ended;
+        this.deadline = deadline;
+        this.team = team;
+    }
+
+    public Team getTeam() {
+        return team;
+    }
+
+    public void setTeam(Team team) {
+        this.team = team;
+    }
 
     public void setId(Long id) {
         this.id = id;

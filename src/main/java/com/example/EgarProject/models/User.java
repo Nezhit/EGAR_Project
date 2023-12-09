@@ -42,6 +42,8 @@ public class User {
     @ManyToOne
     @JoinColumn(name = "team_id")
     private Team team;
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private Set<Task> tasks = new HashSet<>();
 
     public User() {
     }

@@ -38,6 +38,37 @@ public interface TaskRepo extends JpaRepository<Task,Long> {
     // Поиск задач по состоянию (TaskCon)
     @Query("SELECT DISTINCT t FROM Task t JOIN t.changes c WHERE c.user = :user")
     List<Task> findTasksByUser(@Param("user") User user);
+    @Query("SELECT TIMESTAMPDIFF(HOUR, CURRENT_TIMESTAMP, t.deadline) FROM Task t WHERE t.id = :taskId")
+    Long getHoursUntilDeadline(@Param("taskId") Long taskId);
+    // Получение задач, отсортированных по id
+    @Query("SELECT t FROM Task t ORDER BY t.id ASC")
+    List<Task> findTasksSortedByIdAsc();
+    @Query("SELECT t FROM Task t ORDER BY t.id DESC")
+    List<Task> findTasksSortedByIdDesc();
+    // Получение задач, отсортированных по описанию (по алфавиту)
+    @Query("SELECT t FROM Task t ORDER BY t.description")
+    List<Task> findTasksSortedByDescription();
+
+    // Получение задач, отсортированных по дате создания (по возрастанию)
+    @Query("SELECT t FROM Task t ORDER BY t.created ASC")
+    List<Task> findTasksSortedByCreatedAsc();
+    // Получение задач, отсортированных по дате создания (по убыванию)
+    @Query("SELECT t FROM Task t ORDER BY t.created DESC")
+    List<Task> findTasksSortedByCreatedDsc();
+
+    // Получение задач, отсортированных по приоритету (по убыванию)
+    @Query("SELECT t FROM Task t ORDER BY t.priority DESC")
+    List<Task> findTasksSortedByPriorityDesc();
+    // Получение задач, отсортированных по приоритету (по возрастанию)
+    @Query("SELECT t FROM Task t ORDER BY t.priority ASC")
+    List<Task> findTasksSortedByPriorityAsc();
+
+    // Получение задач, отсортированных по сложности (по возрастанию)
+    @Query("SELECT t FROM Task t ORDER BY t.complexity ASC")
+    List<Task> findTasksSortedByComplexityAsc();
+    // Получение задач, отсортированных по сложности (по убыванию)
+    @Query("SELECT t FROM Task t ORDER BY t.complexity DESC")
+    List<Task> findTasksSortedByComplexityDsc();
     Optional<Task> findByTaskCons(TaskCon taskCon);
 
     // Поиск задач, связанных с конкретным пользователем

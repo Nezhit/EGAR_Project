@@ -4,6 +4,7 @@ import com.example.EgarProject.models.User;
 import com.example.EgarProject.pojo.TaskCreationRequest;
 import com.example.EgarProject.pojo.TaskLeadRequest;
 import com.example.EgarProject.pojo.TeamDTO;
+import com.example.EgarProject.repos.TaskRepo;
 import com.example.EgarProject.repos.TeamRepo;
 import com.example.EgarProject.repos.UserRepo;
 import com.example.EgarProject.services.HRService;
@@ -19,6 +20,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.test.annotation.Commit;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
@@ -49,7 +51,8 @@ public class TeamServiceTests {
     @Autowired
     private TeamRepo teamRepo;
 
-
+    @Autowired
+    private TaskRepo taskRepo;
     @Autowired
     private UserRepo userRepo;
     @Autowired
@@ -62,6 +65,7 @@ public class TeamServiceTests {
     @Order(1)
     @Sql(scripts = "classpath:clean.sql", config = @SqlConfig(transactionMode = SqlConfig.TransactionMode.ISOLATED))
     @Sql(scripts = "classpath:testdata.sql", config = @SqlConfig(transactionMode = SqlConfig.TransactionMode.ISOLATED))
+    @DirtiesContext
     public  void loadPostgresDumpIntoH2() {
         //посмотреть точно ли из H2 берутся данные + доп проверки сделать
 
@@ -73,6 +77,7 @@ public class TeamServiceTests {
     @Order(2)
     @Sql(scripts = "classpath:clean.sql", config = @SqlConfig(transactionMode = SqlConfig.TransactionMode.ISOLATED))
     @Sql(scripts = "classpath:testdata.sql", config = @SqlConfig(transactionMode = SqlConfig.TransactionMode.ISOLATED))
+    @DirtiesContext
     public void testCreateTeam() {
 
         BindingResult bindingResult = new MapBindingResult(new HashMap<>(), "taskLeadRequest");
@@ -95,18 +100,21 @@ public class TeamServiceTests {
     @Order(4)
     @Sql(scripts = "classpath:clean.sql", config = @SqlConfig(transactionMode = SqlConfig.TransactionMode.ISOLATED))
     @Sql(scripts = "classpath:testdata.sql", config = @SqlConfig(transactionMode = SqlConfig.TransactionMode.ISOLATED))
+
     @DirtiesContext
     public void usik(){
         TaskCreationRequest taskCreationRequest=new TaskCreationRequest();
         taskCreationRequest.setDeadline(LocalDateTime.now());
         taskCreationRequest.setDescription("Dast");
         hrService.createTask(taskCreationRequest);
+
     }
     @Transactional
     @Test
     @Order(3)
     @Sql(scripts = "classpath:clean.sql", config = @SqlConfig(transactionMode = SqlConfig.TransactionMode.ISOLATED))
     @Sql(scripts = "classpath:testdata.sql", config = @SqlConfig(transactionMode = SqlConfig.TransactionMode.ISOLATED))
+    @DirtiesContext
     public void testAppointLead() {
         // создаем тестовые данные
         TaskLeadRequest taskLeadRequest = createTestTaskLeadRequest(1);
