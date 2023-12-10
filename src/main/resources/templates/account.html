@@ -12,6 +12,15 @@
 <p>Имя пользователя: <span th:text="${user.get().getUsername()}"></span></p>
 <p>Email: <span th:text="${user.get().email}"></span></p>
 <p>Роль: <span id="roleId" th:text="${user.get().roles.iterator().next().name}"></span></p>
+<p>Должность: <span id="specialization" th:text="${user.get().getSpecialization()}"></span></p>
+<p>
+    Команда:
+    <span id="teamName" th:if="${user.get().getTeam() != null}" th:text="${user.get().getTeam().getName()}">
+
+    </span>
+</p>
+
+
 <p id="hrpanelhref"><a href="/main">На главную страницу</a></p>
 <p>Ваши задачи:</p>
 <div th:each="entry : ${groupedTasks}">
@@ -84,16 +93,16 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
     var checkrole = document.getElementById("roleId").textContent;
-
+    var checkteamlead = document.getElementById("specialization").textContent;
     if (checkrole === "ROLE_MODERATOR" || checkrole === "ROLE_ADMIN") {
         // Если условие выполняется, создаем новый параграф и элемент ссылки
         var newParagraph = document.createElement("p");
         var hrlink = document.createElement("a");
         hrlink.href = "/hrpanel";
-        hrlink.textContent = " HR панель";
+        hrlink.textContent = " HR панель ";
         var hrlinkToTasks = document.createElement("a");
         hrlinkToTasks.href = "/tasks";
-        hrlinkToTasks.textContent = " Задачи";
+        hrlinkToTasks.textContent = " Задачи ";
         // Добавляем новую ссылку к новому параграфу
         newParagraph.appendChild(hrlink);
         newParagraph.appendChild(hrlinkToTasks);
@@ -101,7 +110,20 @@ document.addEventListener("DOMContentLoaded", function () {
         var parentElement = document.getElementById("hrpanelhref");
         parentElement.appendChild(newParagraph);
     }
+    if (checkteamlead === "TEAM_LEAD") {
+            // Если условие выполняется, создаем новый параграф и элемент ссылки
+        var newParagraph = document.createElement("p");
+        var teamleadlink = document.createElement("a");
+        teamleadlink.href = "/teamleadpanel";
+        teamleadlink.textContent = " Team Lead панель ";
 
+        // Добавляем новую ссылку к новому параграфу
+        newParagraph.appendChild(teamleadlink);
+
+        // Находим родительский элемент и добавляем новый параграф к нему
+        var parentElement = document.getElementById("hrpanelhref");
+        parentElement.appendChild(newParagraph);
+         }
 
     // Начало перетаскивания
     document.addEventListener("dragstart", function (event) {

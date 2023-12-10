@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Team Lead Panel</title>
+    <!-- Подключение Bootstrap -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+          crossorigin="anonymous">
+    <style>
+        body {
+            padding: 20px;
+        }
+
+        table {
+            width: 100%;
+            margin-bottom: 20px;
+        }
+
+        table, th, td {
+            border: 1px solid #dee2e6;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 8px;
+            text-align: left;
+        }
+
+        h2, h3, h4 {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h2>Team Lead Panel</h2>
+
+    <table class="table">
+        <thead class="thead-dark">
+        <tr>
+            <th>ID</th>
+            <th>Username</th>
+            <th>Email</th>
+            <th>Name</th>
+            <th>Surname</th>
+            <th>Papaname</th>
+            <th>Specialization</th>
+            <!-- Добавьте другие заголовки, если необходимо -->
+        </tr>
+        </thead>
+        <tbody>
+        <!-- Итерация по списку участников и отображение их данных -->
+        <tr th:each="member : ${members}">
+            <td th:text="${member.id}"></td>
+            <td th:text="${member.username}"></td>
+            <td th:text="${member.email}"></td>
+            <td th:text="${member.name}"></td>
+            <td th:text="${member.surname}"></td>
+            <td th:text="${member.papaname}"></td>
+            <td th:text="${member.specialization}"></td>
+            <!-- Добавьте другие поля, если необходимо -->
+        </tr>
+        </tbody>
+    </table>
+
+    <h2>Требуют подтверждения:</h2>
+    <div th:each="userEntry : ${userChanges}">
+        <h3 th:text="${userEntry.key}"></h3>
+
+        <div th:each="taskEntry : ${userEntry.value}">
+            <h4 th:text="${taskEntry.key}"></h4>
+
+            <table class="table">
+                <thead class="thead-light">
+                <tr>
+                    <th>Change ID</th>
+                    <th>Change Text</th>
+                    <th>Change Time</th>
+                    <!-- Добавить другие заголовки, если необходимо -->
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="change : ${taskEntry.value}">
+                    <td th:text="${change.id}"></td>
+                    <td th:text="${change.changeText}"></td>
+                    <td th:text="${change.changeTime}"></td>
+                    <!-- Добавить другие поля, если необходимо -->
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Подключение Bootstrap JS и Popper.js (если необходимо) -->
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+        integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+        crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js"
+        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+        crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+        crossorigin="anonymous"></script>
+</body>
+</html>

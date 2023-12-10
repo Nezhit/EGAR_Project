@@ -17,6 +17,8 @@ public interface UserRepo extends JpaRepository<User,Long> {
     List<User> findEmployeesWithoutRoles(@Param("excludedRoles") List<ERole> excludedRoles);
     List<User> findAll();
     Boolean existsByUsername(String username);
+    @Query("SELECT u FROM User u WHERE u.team IS NULL")
+    List<User> findUsersWithoutTeam();
     Boolean existsByEmail(String email);
 
 }

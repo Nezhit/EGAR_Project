@@ -13,8 +13,8 @@ public class TeamDTO {
     @NotBlank(message = "Название команды должно быть не пустое")
     private String name;
     @NotEmpty(message = "Команда должна содержать хотя бы одного участника")
-    private Set<User> members = new HashSet<>();
-    private User teamLead;
+    private Set<Long> members = new HashSet<>();
+    private Long teamLead;
 
     public String getName() {
         return name;
@@ -24,19 +24,19 @@ public class TeamDTO {
         this.name = name;
     }
 
-    public Set<User> getMembers() {
+    public Set<Long> getMembers() {
         return members;
     }
 
-    public void setMembers(Set<User> members) {
+    public void setMembers(Set<Long> members) {
         this.members = members;
     }
 
-    public User getTeamLead() {
+    public Long getTeamLead() {
         return teamLead;
     }
 
-    public void setTeamLead(User teamLead) {
+    public void setTeamLead(Long teamLead) {
         this.teamLead = teamLead;
     }
 }

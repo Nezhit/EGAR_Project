@@ -89,6 +89,14 @@ public class User {
         this.team = team;
     }
 
+    public Set<Task> getTasks() {
+        return tasks;
+    }
+
+    public void setTasks(Set<Task> tasks) {
+        this.tasks = tasks;
+    }
+
     public String getSurname() {
         return surname;
     }

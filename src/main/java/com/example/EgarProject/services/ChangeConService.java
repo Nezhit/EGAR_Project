@@ -18,10 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -119,5 +116,26 @@ public class ChangeConService {
         }
         return ResponseEntity.ok("Пользователь у задачи успешно сменен");
     }
+    // Метод для формирования HashMap
+    public Map<String, Map<String, List<ChangeJournal>>> getChangesMapForMembers(List<User> members) {
+        // Собираем изменения для каждого пользователя
+        return members.stream()
+                .collect(Collectors.toMap(
+                        User::getUsername,
+                        user -> getChangesForUser(user.getTasks())
+                                .stream()
+                                .collect(Collectors.groupingBy(
+                                        change -> change.getTask().getDescription(),
+                                        Collectors.toList()
+                                ))
+                ));
+    }
+
+    private List<ChangeJournal> getChangesForUser(Set<Task> tasks) {
+        return tasks.stream()
+                .flatMap(task -> changeJournalRepo.findByTaskId(task.getId()).stream())
+                .collect(Collectors.toList());
+    }
+
 
 }

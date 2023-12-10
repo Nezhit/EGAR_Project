@@ -165,5 +165,15 @@ public class UserInfo {
 
         return daysBetween != 0 ? (double) (changeTimestamps.size() - 1) / daysBetween : 0.0;
     }
+    public List<User> getUsersWithoutTeam(){
+        return userRepo.findUsersWithoutTeam();
+    }
+    public Set<User> getUsersFromSet(Set<Long> userIds) {
+        return userIds.stream()
+                .map(userRepo::findById) // Преобразование каждого id в Optional<User>
+                .filter(Optional::isPresent) // Отфильтровать те, которые присутствуют
+                .map(Optional::get) // Извлечь пользователей из Optional
+                .collect(Collectors.toSet()); // Собрать результат в список
+    }
 
     }

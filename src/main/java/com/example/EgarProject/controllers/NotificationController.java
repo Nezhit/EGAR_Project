@@ -11,7 +11,9 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/api/notifications")
@@ -28,10 +30,14 @@ public class NotificationController {
     public String testNotif(Model model,jakarta.servlet.http.HttpServletRequest request){
         String username=cookiesService.extractUsername(request);
         List<Notification> notifications=notificationService.getUserNotifications(username);
+        notificationService.markAllAsRead(username);
+        notifications = notifications.stream()
+                .sorted(Comparator.comparing(Notification::getTimestamp).reversed())
+                .toList();
         model.addAttribute("notifications",notifications);
 
 
-        return "test";
+        return "mail";
     }
 //    @Scheduled(fixedRate = 10000)
 //    public void doooo(){

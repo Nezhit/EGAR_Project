@@ -9,6 +9,7 @@ import com.example.EgarProject.repos.UserRepo;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.transaction.Transactional;
 import org.springframework.scheduling.annotation.Async;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
@@ -88,4 +89,14 @@ public class NotificationService {
             notificationRepo.save(notification);
         });
     }
+    public void markAllAsRead(String username){
+        User user= userRepo.findByUsername(username).orElseThrow(()->{
+            return new UsernameNotFoundException("User с именем "+username+"не найден");
+        });
+
+        List<Notification> notifications=notificationRepo.findByUser(user);
+        notifications.forEach(note->{note.setType(ENotificationType.MESSAGE_READ);});
+        notificationRepo.saveAll(notifications);
+    }
+
 }

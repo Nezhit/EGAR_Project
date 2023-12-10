@@ -89,7 +89,7 @@ public class TeamServiceTests {
 //        // вызываем метод сервиса для создания команды
 
          teamService.createTeam(teamDTO, bindingResult);
-         teamDTO.setTeamLead(userRepo.findByUsername("user7").get());
+         teamDTO.setTeamLead(userRepo.findById(7L).get().getId());
         teamDTO.setName("titit");
         teamService.createTeam(teamDTO, bindingResult);
         teamRepo.findAll().forEach(team -> System.out.println(team.getId()+" = "+ team.getName()));

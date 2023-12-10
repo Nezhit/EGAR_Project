@@ -65,24 +65,24 @@ public class HRService {
         List<Task> tasksWithEndedLaterThanDeadline = taskRepo.findTasksWithEndedLaterThanDeadline();
         List<Task> tasksWithTwoDaysDifference = taskRepo.findTasksWithTwoDaysDifference(now.plusDays(2),now);
 
-        overdueTasks.forEach(task -> {
-            System.out.println("overdueTask ID: " + task.getId());
-            System.out.println("overdueTask Name: " + task.getDescription());
-            // Выведите другие поля задачи, если они есть
-            System.out.println("----------------------");
-        });
-        tasksWithEndedLaterThanDeadline.forEach(task -> {
-            System.out.println("tasksWithEndedLaterThanDeadline ID: " + task.getId());
-            System.out.println("tasksWithEndedLaterThanDeadline Name: " + task.getDescription());
-            // Выведите другие поля задачи, если они есть
-            System.out.println("----------------------");
-        });
-        tasksWithTwoDaysDifference.forEach(task -> {
-            System.out.println("tasksWithTwoDaysDifference ID: " + task.getId());
-            System.out.println("tasksWithTwoDaysDifference Name: " + task.getDescription());
-            // Выведите другие поля задачи, если они есть
-            System.out.println("----------------------");
-        });
+//        overdueTasks.forEach(task -> {
+//            System.out.println("overdueTask ID: " + task.getId());
+//            System.out.println("overdueTask Name: " + task.getDescription());
+//            // Выведите другие поля задачи, если они есть
+//            System.out.println("----------------------");
+//        });
+//        tasksWithEndedLaterThanDeadline.forEach(task -> {
+//            System.out.println("tasksWithEndedLaterThanDeadline ID: " + task.getId());
+//            System.out.println("tasksWithEndedLaterThanDeadline Name: " + task.getDescription());
+//            // Выведите другие поля задачи, если они есть
+//            System.out.println("----------------------");
+//        });
+//        tasksWithTwoDaysDifference.forEach(task -> {
+//            System.out.println("tasksWithTwoDaysDifference ID: " + task.getId());
+//            System.out.println("tasksWithTwoDaysDifference Name: " + task.getDescription());
+//            // Выведите другие поля задачи, если они есть
+//            System.out.println("----------------------");
+//        });
 
         List<List<Task>> notifications = new ArrayList<>();
         notifications.add(overdueTasks);

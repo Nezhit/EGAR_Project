@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.BindingResult;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -19,10 +20,12 @@ import java.util.Set;
 public class TeamService {
     private final TeamRepo teamRepo;
     private final UserRepo userRepo;
+    private final UserInfo userInfo;
 
-    public TeamService(TeamRepo teamRepo, UserRepo userRepo) {
+    public TeamService(TeamRepo teamRepo, UserRepo userRepo, UserInfo userInfo) {
         this.teamRepo = teamRepo;
         this.userRepo = userRepo;
+        this.userInfo = userInfo;
     }
     @Transactional
     public ResponseEntity<String> createTeam(TeamDTO teamDTO, BindingResult bindingResult){
@@ -33,22 +36,26 @@ public class TeamService {
         if (teamRepo.findByName(teamDTO.getName()).isPresent()) {
             return ResponseEntity.badRequest().body("Такая команда уже существует");
         }
-        if (teamRepo.findByTeamLead(teamDTO.getTeamLead()).isPresent()) {
+        if (teamRepo.findByTeamLead(userRepo.findById(teamDTO.getTeamLead()).get()).isPresent()) {
             return ResponseEntity.badRequest().body("Этот Тим Лид уже назначен, выберете не занятого");
         }
-        if (!userRepo.findByUsername(teamDTO.getTeamLead().getUsername()).get().getSpecialization().equals(ESpecialization.TEAM_LEAD)) {
+        if (!userRepo.findByUsername(userRepo.findById(teamDTO.getTeamLead()).get().getUsername()).get().getSpecialization().equals(ESpecialization.TEAM_LEAD)) {
             return ResponseEntity.badRequest().body("Пользователь не является Тим Лидом");
         }
 
         Team team = new Team();
+        User teamLead = userRepo.findById(teamDTO.getTeamLead()).get();
         team.setName(teamDTO.getName());
-        team.setMembers(teamDTO.getMembers());
-        team.setTeamLead(teamDTO.getTeamLead());
+        team.setMembers(userInfo.getUsersFromSet(teamDTO.getMembers()));
+        if(userInfo.getUsersFromSet(teamDTO.getMembers()).contains(teamLead)){
+            return ResponseEntity.badRequest().body("Назначенный тим лид не может быть членом списка команды");
+        }
+        team.setTeamLead(teamLead);
 
         teamRepo.saveAndFlush(team);
         Long teamId = team.getId();
-        Set<User> members = teamDTO.getMembers();
-        User teamLead = teamDTO.getTeamLead();
+        Set<User> members = userInfo.getUsersFromSet(teamDTO.getMembers());
+
 
 
         // Обновляем идентификатор команды для участников
@@ -109,5 +116,8 @@ public class TeamService {
         }else{
             return ResponseEntity.badRequest().body("Тим лида с таким ником не существует");
         }
+    }
+    public List<User> getTeamMembersByLeader(Long teamLeadId){
+        return teamRepo.findMembersByTeamLeadId(teamLeadId);
     }
 }
