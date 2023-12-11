@@ -34,9 +34,11 @@ import org.springframework.validation.MapBindingResult;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -139,41 +141,26 @@ public class TeamServiceTests {
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
         // добавьте здесь дополнительные проверки, если это необходимо
     }
+    @Transactional
+    @Test
+    @Order(3)
+    @Sql(scripts = "classpath:clean.sql", config = @SqlConfig(transactionMode = SqlConfig.TransactionMode.ISOLATED))
+    @Sql(scripts = "classpath:testdata.sql", config = @SqlConfig(transactionMode = SqlConfig.TransactionMode.ISOLATED))
+    @DirtiesContext
+    public void testGetTeamMembersByLeader(){
+        testCreateTeam();
+        // Вызов метода сервиса для получения участников команды
+        List<User> teamMembers = teamService.getTeamMembersByLeader(6L);
 
+        // Проверка, что список участников не пустой и содержит ожидаемые элементы
+        assertFalse(teamMembers.isEmpty());
+    }
     private TeamDTO createTestTeamDTO() {
         String json="{\n" +
-                "  \"name\": \"Team3\",\n" +
-                "  \"members\": [\n" +
-                "    {\n" +
-                "      \"id\": 1,\n" +
-                "      \"username\": \"user\",\n" +
-                "      \"email\": \"user@mail.ru\",\n" +
-                "      \"password\": \"1234\",\n" +
-                "      \"specialization\": \"JUNIOR\"\n" +
-                "    },\n" +
-                "    {\n" +
-                "      \"id\": 2,\n" +
-                "      \"username\": \"user2\",\n" +
-                "      \"email\": \"user2@mail.ru\",\n" +
-                "      \"password\": \"1234\",\n" +
-                "      \"specialization\": \"JUNIOR\"\n" +
-                "    },\n" +
-                "    {\n" +
-                "      \"id\": 3,\n" +
-                "      \"username\": \"user3\",\n" +
-                "      \"email\": \"user3@mail.ru\",\n" +
-                "      \"password\": \"1234\",\n" +
-                "      \"specialization\": \"SENIOR\"\n" +
-                "    }\n" +
-                "  ],\n" +
-                "  \"teamLead\": {\n" +
-                "    \"id\": 6,\n" +
-                "    \"username\": \"user5\",\n" +
-                "    \"email\": \"user5@mail.ru\",\n" +
-                "    \"password\": \"1234\",\n" +
-                "    \"specialization\": \"TEAM_LEAD\"\n" +
-                "  }\n" +
-                "}\n";
+                "  \"name\": \"Команда 1\",\n" +
+                "  \"members\": [1, 2, 3],\n" +
+                "  \"teamLead\": 6\n" +
+                "}";
         try {
             ObjectMapper objectMapper = new ObjectMapper();
             return objectMapper.readValue(json, TeamDTO.class);
