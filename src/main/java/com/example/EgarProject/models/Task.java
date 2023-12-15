@@ -45,12 +45,29 @@ public class Task {
     @Column(name = "complexity")
     private EComplexity complexity;
     @ManyToOne
+    @JsonIgnore
     @JoinColumn(name = "user_id")
     private User user;
 
     @PrePersist
     protected void onCreate() {
         created = LocalDateTime.now();
+        switch (complexity) {
+            case EASY:
+                priority=15;
+                break;
+            case MEDIUM:
+                priority=30;
+                break;
+            case HARD:
+                priority=45;
+                break;
+            case EPIC:
+                priority=60;
+                break;
+            default:
+                priority=5;
+        }
     }
 
     public Task() {
@@ -123,6 +140,7 @@ public class Task {
     public void setId(Long id) {
         this.id = id;
     }
+
 
     public String getDescription() {
         return description;

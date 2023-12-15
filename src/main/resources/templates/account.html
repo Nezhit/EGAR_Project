@@ -29,6 +29,7 @@
             <div>
                 <span id="entryKey" th:text="${entry.key}"></span>
                 <span th:text="${entry.value[0].getTaskDescription()}"></span>
+                <span th:text="${entry.value[0].getTask().getComplexity()}" id="complexity"></span>
                 <span th:text="${change.getChangeText()}"></span>
                 <span th:text="${change.getChangeTime()}"></span>
                 <span th:text="${change.getUser().getUsername()}"></span>
@@ -39,7 +40,21 @@
         </div>
     </div>
 </div>
-
+<!-- Добавляем чекбоксы для каждого уровня сложности -->
+<div>
+    <label>
+        <input type="checkbox" id="easyCheckbox" onchange="toggleComplexity('EASY')"> Easy
+    </label>
+    <label>
+        <input type="checkbox" id="mediumCheckbox" onchange="toggleComplexity('MEDIUM')"> Medium
+    </label>
+    <label>
+        <input type="checkbox" id="hardCheckbox" onchange="toggleComplexity('HARD')"> Hard
+    </label>
+    <label>
+        <input type="checkbox" id="epicCheckbox" onchange="toggleComplexity('EPIC')"> Epic
+    </label>
+</div>
 
 <div class="droppable" id="section1" data-sectionid="section1">TODO</div>
 <div class="droppable" id="section2" data-sectionid="section2">IN PROGRESS</div>
@@ -103,9 +118,13 @@ document.addEventListener("DOMContentLoaded", function () {
         var hrlinkToTasks = document.createElement("a");
         hrlinkToTasks.href = "/tasks";
         hrlinkToTasks.textContent = " Задачи ";
+        var hrlinkToReport = document.createElement("a");
+        hrlinkToReport.href = "/reportdesk";
+        hrlinkToReport.textContent = " Отчеты ";
         // Добавляем новую ссылку к новому параграфу
         newParagraph.appendChild(hrlink);
         newParagraph.appendChild(hrlinkToTasks);
+        newParagraph.appendChild(hrlinkToReport);
         // Находим родительский элемент и добавляем новый параграф к нему
         var parentElement = document.getElementById("hrpanelhref");
         parentElement.appendChild(newParagraph);
@@ -213,6 +232,7 @@ document.addEventListener("DOMContentLoaded", function () {
         modal.style.display = "none";
     };
 });
+
 
 // Функция для чтения cookie по имени
 function getCookie(name) {

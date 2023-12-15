@@ -113,6 +113,7 @@ public class HRService {
         task.setTaskCon(taskCons);
         task.setDescription(taskCreationRequest.getDescription());
         task.setDeadline(taskCreationRequest.getDeadline());
+        task.setComplexity(taskCreationRequest.getComplexity());
         // Проверка валидации
         Set<ConstraintViolation<Task>> violations = validator.validate(task);
         if (!violations.isEmpty()) {

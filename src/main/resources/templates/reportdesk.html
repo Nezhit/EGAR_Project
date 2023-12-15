@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document Report Desk</title>
+
+
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+  <style>
+        /* Дополнительные стили для таблицы */
+        table {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+  <h2 class="mt-5 mb-4">Document Report Desk</h2>
+  <h3 class="mt-5 mb-4">Документы можно просмотреть, нажав на них два раза</h3>
+
+  <table class="table table-bordered table-hover">
+    <thead class="thead-light">
+    <tr>
+      <th>ID</th>
+      <th>Title</th>
+      <th>Author</th>
+      <th>Reading Progress</th>
+      <th>Created</th>
+    </tr>
+    </thead>
+    <tbody>
+
+    <tr th:each="document : ${documents}" th:ondblclick="'redirectToPdf(this)'"
+        >
+      <td th:text="${document.id}"></td>
+      <td th:text="${document.title}"></td>
+      <td th:text="${document.author}"></td>
+      <td th:text="${document.readingProgress}"></td>
+      <td th:text="${document.created}"></td>
+    </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- Подключение Bootstrap JS и Popper.js -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.1/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+<script>
+        // JavaScript функция для обработки двойного нажатия и перехода по ссылке
+        function redirectToPdf(element) {
+            const bookId = extractId(element.cells[0].innerText); // Извлечение ID из первой ячейки
+            window.location.href = '/pdf/' + bookId;
+        }
+
+        // JavaScript функция для извлечения числа из строки
+        function extractId(text) {
+            return parseInt(text, 10) || 0; // Преобразование строки в число
+        }
+
+
+
+    </script>
+
+</body>
+</html>

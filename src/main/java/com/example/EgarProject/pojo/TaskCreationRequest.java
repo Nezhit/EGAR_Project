@@ -1,5 +1,6 @@
 package com.example.EgarProject.pojo;
 
+import com.example.EgarProject.models.enums.EComplexity;
 import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -12,8 +13,17 @@ public class TaskCreationRequest {
     private String description;
     @FutureOrPresent(message = "Дата дедлайна должна быть в будущем или текущей")
     private LocalDateTime deadline;
+    private EComplexity complexity;
 
     public TaskCreationRequest() {
+    }
+
+    public EComplexity getComplexity() {
+        return complexity;
+    }
+
+    public void setComplexity(EComplexity complexity) {
+        this.complexity = complexity;
     }
 
     public String getDescription() {

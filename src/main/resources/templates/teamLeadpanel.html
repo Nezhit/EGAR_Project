@@ -5,7 +5,27 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>Team Lead Panel</title>
     <script>
+function generateReport() {
+            var reportName = document.getElementById("reportName").value;
 
+            // Отправка AJAX-запроса
+            var xhr = new XMLHttpRequest();
+            xhr.open("GET", "/teamleadpanel/report/" + reportName, true);
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4) {
+                    if (xhr.status === 200) {
+                        // Обработка успешного ответа
+                        alert("Отчет сгенерирован успешно!");
+                        console.log("Report generated successfully!");
+                        // Дополнительные действия после успешной генерации отчета
+                    } else {
+                        // Обработка ошибки
+                        console.error("Failed to generate report. Status: " + xhr.status);
+                    }
+                }
+            };
+            xhr.send();
+        }
 
 document.addEventListener('DOMContentLoaded', function() {
     window.uploadFile = function() {
@@ -42,6 +62,7 @@ document.addEventListener('DOMContentLoaded', function() {
     } else {
         alert('Please choose a file to upload');
     }
+
     // Функция для чтения cookie по имени
 function getCookie(name) {
     var value = "; " + document.cookie;
@@ -120,7 +141,14 @@ function getCookie(name) {
         <input type="file" id="fileInput" name="file" accept=".pdf">
         <button type="button" onclick="uploadFile()">Upload</button>
     </form>
+    <h2>Сгенерировать отчет автоматически</h2>
 
+    <form id="reportForm">
+        <label for="reportName">Название отчета:</label>
+        <input type="text" id="reportName" name="reportName" required>
+
+        <button type="button" onclick="generateReport()">Generate Report</button>
+    </form>
     <h2>Требуют подтверждения:</h2>
     <div th:each="userEntry : ${userChanges}">
         <h3 th:text="${userEntry.key}"></h3>

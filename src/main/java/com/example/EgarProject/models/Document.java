@@ -2,6 +2,8 @@ package com.example.EgarProject.models;
 
 import jakarta.persistence.*;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Table(name="documents")
 public class Document {
@@ -13,6 +15,11 @@ public class Document {
     private String filePath;
     @Column(name = "reading_progress")
     private int readingProgress; // Прогресс чтения (номер страницы)
+    private LocalDateTime created;
+    @PrePersist
+    protected void onCreate() {
+        created = LocalDateTime.now();
+    }
 
     public Document() {
     }
@@ -29,6 +36,14 @@ public class Document {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public LocalDateTime getCreated() {
+        return created;
+    }
+
+    public void setCreated(LocalDateTime created) {
+        this.created = created;
     }
 
     public int getReadingProgress() {

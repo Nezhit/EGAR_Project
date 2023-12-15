@@ -4,6 +4,7 @@ import com.example.EgarProject.models.ChangeJournal;
 import com.example.EgarProject.models.Task;
 import com.example.EgarProject.models.TaskCon;
 import com.example.EgarProject.models.User;
+import com.example.EgarProject.models.enums.EComplexity;
 import com.example.EgarProject.models.enums.ETaskCon;
 import com.example.EgarProject.pojo.ChangedTasksDTO;
 import com.example.EgarProject.pojo.ReplaceUserRequest;
@@ -149,6 +150,7 @@ public class HRController {
         Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
         if (authorities.contains(new SimpleGrantedAuthority("ROLE_MODERATOR"))) {
             // Логика для модератора (панель создания задачи)
+
             return "createTaskPanel";
         } else if (authorities.contains(new SimpleGrantedAuthority("ROLE_USER"))) {
             // Логика для пользователя (список задач)

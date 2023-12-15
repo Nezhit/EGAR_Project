@@ -1,10 +1,18 @@
 package com.example.EgarProject.controllers;
 
 import com.example.EgarProject.models.Document;
+import com.example.EgarProject.models.Team;
+import com.example.EgarProject.models.User;
+import com.example.EgarProject.repos.TeamRepo;
+import com.example.EgarProject.repos.UserRepo;
+import com.example.EgarProject.services.CookiesService;
 import com.example.EgarProject.services.DocumentService;
+import com.example.EgarProject.services.UserInfo;
+import jakarta.servlet.http.HttpServletRequest;
 import org.apache.pdfbox.multipdf.Splitter;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.springframework.http.*;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,10 +30,19 @@ import java.util.List;
 @Controller
 public class DocumentController {
     private final DocumentService documentService;
+    private final CookiesService cookiesService;
+    private final UserInfo userInfo;
+    private  final TeamRepo teamRepo;
+    private final UserRepo userRepo;
 
-    public DocumentController(DocumentService documentService) {
+    public DocumentController(DocumentService documentService, CookiesService cookiesService, UserInfo userInfo, TeamRepo teamRepo, UserRepo userRepo) {
         this.documentService = documentService;
+        this.cookiesService = cookiesService;
+        this.userInfo = userInfo;
+        this.teamRepo = teamRepo;
+        this.userRepo = userRepo;
     }
+
 
     @PostMapping("/upload")
     public ResponseEntity<String> handleFileUpload(@RequestParam("file") MultipartFile file) {
@@ -96,4 +113,24 @@ public class DocumentController {
 
 
     }
+    @GetMapping("/teamleadpanel/report/{reportName}")
+    public ResponseEntity<?> generateReport(HttpServletRequest request,@PathVariable String reportName ) throws IOException {
+        String username=cookiesService.extractUsername(request);
+        User teamLead=userRepo.findByUsername(username).orElseThrow();
+        Team team=teamRepo.findByTeamLead(teamLead).get();
+        byte[] pdfReport= documentService.generateReport(team);
+
+        documentService.processBookAsync(pdfReport,username,reportName);
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_PDF);
+        headers.setContentDisposition(ContentDisposition.builder("inline").filename("output.pdf").build());
+        return new ResponseEntity<>(pdfReport, headers, HttpStatus.OK);
+    }
+    @GetMapping("/reportdesk")
+    public String getReportDesk(Model model){
+        List<Document> documents=documentService.getAll();
+        model.addAttribute("documents",documents);
+        return "reportdesk";
+    }
+
 }

@@ -13,41 +13,52 @@
     <label for="deadline">Deadline:</label>
     <input type="datetime-local" id="deadline" name="deadline" required><br>
 
+    <!-- Добавлен выпадающий список complexities -->
+    <label for="complexity">Complexity:</label>
+    <select id="complexity" name="complexity">
+        <option value="EASY">Easy</option>
+        <option value="MEDIUM">Medium</option>
+        <option value="HARD">Hard</option>
+        <option value="EPIC">Epic</option>
+    </select><br>
+
     <button type="submit">Create Task</button>
 </form>
 
 <script>
-        const taskForm = document.getElementById("taskForm");
+    const taskForm = document.getElementById("taskForm");
 
-        taskForm.addEventListener("submit", function(event) {
-            event.preventDefault();
+    taskForm.addEventListener("submit", function (event) {
+        event.preventDefault();
 
-            const description = document.getElementById("description").value;
-            const deadline = document.getElementById("deadline").value;
+        const description = document.getElementById("description").value;
+        const deadline = document.getElementById("deadline").value;
+        const complexity = document.getElementById("complexity").value; // Получаем выбранное значение
 
-            const formData = {
-                description: description,
-                deadline: deadline
-            };
+        const formData = {
+            description: description,
+            deadline: deadline,
+            complexity: complexity // Добавляем complexity в объект данных
+        };
 
-            // Отправка XHR запроса
-            const xhr = new XMLHttpRequest();
-            xhr.open("POST", "/create-task", true);
-            xhr.setRequestHeader("Content-Type", "application/json");
-            xhr.onreadystatechange = function() {
-                if (xhr.readyState === XMLHttpRequest.DONE) {
-                    if (xhr.status === 200) {
-                        console.log("Task created successfully!");
-                        alert("Задача успешно добавлена");
-                        // Можно добавить обработку успешного создания задачи, если нужно
-                    } else {
-                        console.error("Failed to create task");
-                        // Обработка ошибок, если не удалось создать задачу
-                    }
+        // Отправка XHR запроса
+        const xhr = new XMLHttpRequest();
+        xhr.open("POST", "/create-task", true);
+        xhr.setRequestHeader("Content-Type", "application/json");
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === XMLHttpRequest.DONE) {
+                if (xhr.status === 200) {
+                    console.log("Task created successfully!");
+                    alert("Задача успешно добавлена");
+                    // Можно добавить обработку успешного создания задачи, если нужно
+                } else {
+                    console.error("Failed to create task");
+                    // Обработка ошибок, если не удалось создать задачу
                 }
-            };
-            xhr.send(JSON.stringify(formData));
-        });
-    </script>
+            }
+        };
+        xhr.send(JSON.stringify(formData));
+    });
+</script>
 </body>
 </html>
