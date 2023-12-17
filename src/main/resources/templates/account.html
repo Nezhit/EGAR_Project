@@ -22,6 +22,9 @@
 
 
 <p id="hrpanelhref"><a href="/main">На главную страницу</a></p>
+<p id="mailservice"><a href="/sendmail">Email</a></p>
+
+<p id="notifservice"><a href="/api/notifications/testoviy">Notifications</a></p>
 <p>Ваши задачи:</p>
 <div th:each="entry : ${groupedTasks}">
     <div class="draggable" id="drag" draggable="true" data-taskid="${entry.key}" data-section="${change.getTask().getTaskCons()[0].getCondition()}">

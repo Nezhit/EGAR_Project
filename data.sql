@@ -20,26 +20,36 @@ INSERT INTO users (username, email, password, name, surname, papaname, specializ
     ('user7', 'user7@mail.ru', '$2a$10$DH3Sx6OP.J5C0YdsTESgmuPoCE/MJzKC0i9I81F8B4T4wDAGA8QEe', 'Tom', 'Johnson', 'PapaTom', 'TEAM_LEAD');
 
 INSERT INTO teams (  team_lead_id,name) VALUES
-    (5,'Team1');
+    (5,'Team1'),
+     (6,'Boyz');
+ UPDATE users
+SET team_id = 2
+WHERE username = 'user2';
+UPDATE users
+SET team_id = 2
+WHERE username = 'user3';
+UPDATE users
+SET team_id = 2
+WHERE username = 'user5';
 
+INSERT INTO tasks (created, deadline, ended, description, priority, complexity) VALUES
+    ('2023-10-19 00:00:00', '2023-10-30 00:00:00', '2023-10-28 00:00:00',  'SimpleTestTask', 0, 2),
+    ('2023-10-21 00:00:00', '2023-10-31 00:00:00', '2023-10-29 00:00:00',  'AnotherTestTask', 0, 1),
+    ('2023-10-23 00:00:00', '2023-10-31 00:00:00', NULL,  'DeadTask', 0, 0),
+    ('2023-10-29 00:00:00', '2023-10-31 00:00:00', '2023-11-01 00:00:00',  'OverdueTask', 0, 3),
+    ('2023-11-03 00:00:00', '2023-11-17 00:00:00', NULL,  'ExpiringTask', 0, 1),
+    ('2023-11-06 01:54:20.829525', '2023-11-07 01:20:00', '2023-11-10 00:00:00',  'CreatingTask', 0, 2),
+    ('2023-11-06 01:54:28.128396', '2023-11-07 01:20:00', '2023-11-10 00:00:00',  'CreatingTaskOne', 0, 0),
+    ('2023-11-06 01:57:48.300008', '2023-11-07 02:30:00', NULL,  'CreatingTaskTwo', 0, 3),
+    ('2023-11-06 23:12:10.144533', '2023-11-07 03:03:00', NULL,  'CreatingTaskThree', 0, 1),
+    ('2023-11-21 21:39:21.538369', '2023-11-22 01:33:00', NULL,  'Desk Task', 0, 2),
+    ('2023-11-21 21:53:13.053656', '2023-11-22 01:33:00', NULL,  'Valid Task', 0, 0),
+    ('2023-11-23 13:30:56.248012', '2023-11-25 01:33:00', '2023-11-23 14:51:48.056148',  'First Completed Task', 0, 3),
+    ('2023-11-23 13:31:09.963794', '2023-11-26 01:33:00', '2023-11-23 14:51:58.529288',  'Second Completed Task', 0, 1),
+    ('2023-11-23 13:31:16.613907', '2023-11-26 01:33:00', '2023-11-23 14:52:12.520823',  'Third Completed Task', 0, 2),
+    ('2023-11-23 17:17:09.684594', '2023-11-25 02:46:00', NULL,  'Interesting Task', 0, 3),
+    ('2023-11-23 17:17:21.715764', '2023-11-25 02:50:00', NULL,  'Boring Task', 0, 0);
 
-INSERT INTO tasks (created, deadline, ended, description,priority) VALUES
-    ('2023-10-19 00:00:00', '2023-10-30 00:00:00', '2023-10-28 00:00:00',  'SimpleTestTask',0),
-    ('2023-10-21 00:00:00', '2023-10-31 00:00:00', '2023-10-29 00:00:00',  'AnotherTestTask',0),
-    ('2023-10-23 00:00:00', '2023-10-31 00:00:00', NULL,  'DeadTask',0),
-    ('2023-10-29 00:00:00', '2023-10-31 00:00:00', '2023-11-01 00:00:00',  'OverdueTask',0),
-    ('2023-11-03 00:00:00', '2023-11-17 00:00:00', NULL,  'ExpiringTask',0),
-    ('2023-11-06 01:54:20.829525', '2023-11-07 01:20:00', '2023-11-10 00:00:00',  'CreatingTask',0),
-    ('2023-11-06 01:54:28.128396', '2023-11-07 01:20:00', '2023-11-10 00:00:00',  'CreatingTaskOne',0),
-    ('2023-11-06 01:57:48.300008', '2023-11-07 02:30:00', NULL,  'CreatingTaskTwo',0),
-    ('2023-11-06 23:12:10.144533', '2023-11-07 03:03:00', NULL,  'CreatingTaskThree',0),
-    ('2023-11-21 21:39:21.538369', '2023-11-22 01:33:00', NULL,  'Desk Task',0),
-    ('2023-11-21 21:53:13.053656', '2023-11-22 01:33:00', NULL,  'Valid Task',0),
-    ('2023-11-23 13:30:56.248012', '2023-11-25 01:33:00', '2023-11-23 14:51:48.056148',  'First Completed Task',0),
-    ('2023-11-23 13:31:09.963794', '2023-11-26 01:33:00', '2023-11-23 14:51:58.529288',  'Second Completed Task',0),
-    ('2023-11-23 13:31:16.613907', '2023-11-26 01:33:00', '2023-11-23 14:52:12.520823',  'Third Completed Task',0),
-    ('2023-11-23 17:17:09.684594', '2023-11-25 02:46:00', NULL,  'Interesting Task',0),
-    ('2023-11-23 17:17:21.715764', '2023-11-25 02:50:00', NULL,  'Boring Task',0);
     INSERT INTO user_roles (user_id, role_id) VALUES (1, 1);
 INSERT INTO user_roles (user_id, role_id) VALUES (4, 1);
 INSERT INTO user_roles (user_id, role_id) VALUES (5, 1);

@@ -1,6 +1,7 @@
 package com.example.EgarProject.integrated;
 
 import com.example.EgarProject.models.User;
+import com.example.EgarProject.models.enums.EComplexity;
 import com.example.EgarProject.pojo.TaskCreationRequest;
 import com.example.EgarProject.pojo.TaskLeadRequest;
 import com.example.EgarProject.pojo.TeamDTO;
@@ -11,7 +12,6 @@ import com.example.EgarProject.services.HRService;
 import com.example.EgarProject.services.TeamService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.transaction.Transactional;
-import jakarta.validation.Valid;
 import org.junit.Test;
 import org.junit.jupiter.api.Order;
 import org.junit.runner.RunWith;
@@ -19,23 +19,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.test.annotation.Commit;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlConfig;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.MapBindingResult;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -108,6 +102,7 @@ public class TeamServiceTests {
         TaskCreationRequest taskCreationRequest=new TaskCreationRequest();
         taskCreationRequest.setDeadline(LocalDateTime.now());
         taskCreationRequest.setDescription("Dast");
+        taskCreationRequest.setComplexity(EComplexity.EPIC);
         hrService.createTask(taskCreationRequest);
 
     }
