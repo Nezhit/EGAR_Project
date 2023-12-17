@@ -4,5 +4,6 @@ public enum ETaskCon {
     TODO,
     IN_PROGRESS,
     TESTING,
-    DONE
+    DONE,
+    ACCEPTED
 }

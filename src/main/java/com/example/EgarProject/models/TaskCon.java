@@ -35,4 +35,5 @@ public class TaskCon {
     public void setCondition(ETaskCon condition) {
         this.condition = condition;
     }
+
 }

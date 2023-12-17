@@ -1,6 +1,7 @@
 package com.example.EgarProject.pojo;
 
 import com.example.EgarProject.models.enums.ESpecialization;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 
@@ -10,11 +11,16 @@ public class SignupRequest {
     @NotBlank(message = "Имя пользователя не должно быть пустым")
     @Pattern(regexp = "\\S+", message = "Имя пользователя не должно состоять только из пробелов")
     private String username;
+    @Email(message = "Некорректный формат email")
     private String email;
     private Set<String> roles;
+    @NotBlank(message = "Пароль не должен быть пустым")
     private String password;
+    @NotBlank(message = "Имя не должен быть пустым")
     private String name;
+    @NotBlank(message = "Фамилия не должен быть пустым")
     private String surname;
+    @NotBlank(message = "Отчество не должен быть пустым")
     private String papaname;
     private ESpecialization specialization;
 

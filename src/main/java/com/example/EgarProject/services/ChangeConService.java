@@ -8,6 +8,7 @@ import com.example.EgarProject.models.enums.ETaskCon;
 import com.example.EgarProject.pojo.ChangeConRequest;
 import com.example.EgarProject.pojo.ChangedTasksDTO;
 import com.example.EgarProject.pojo.ReplaceUserRequest;
+import com.example.EgarProject.pojo.TeamLeadMark;
 import com.example.EgarProject.repos.ChangeJournalRepo;
 import com.example.EgarProject.repos.TaskConRepo;
 import com.example.EgarProject.repos.TaskRepo;
@@ -16,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.BindingResult;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -135,6 +137,24 @@ public class ChangeConService {
         return tasks.stream()
                 .flatMap(task -> changeJournalRepo.findByTaskId(task.getId()).stream())
                 .collect(Collectors.toList());
+    }
+    public ResponseEntity<String> critisizeChange(TeamLeadMark teamLeadMark, BindingResult bindingResult){
+        if (bindingResult.hasErrors()) {
+            // Обработка ошибок валидации
+            return ResponseEntity.badRequest().body("Ошибка валидации: " + bindingResult.getAllErrors().get(0).getDefaultMessage());
+        }
+        ChangeJournal changeJournal=changeJournalRepo.findById(teamLeadMark.getId()).get();
+        ChangeJournal newChangeJournal =new ChangeJournal(changeJournal.getTask(),changeJournal.getUser(),LocalDateTime.now(), teamLeadMark.getChangeText());
+        Task task=changeJournal.getTask();
+
+        Set<TaskCon> taskCons=new HashSet<>();
+        TaskCon newTaskCon=taskConRepo.findByCondition(teamLeadMark.getTaskCon()).get();
+        taskCons.add(newTaskCon);
+        task.setTaskCon(taskCons);
+        taskRepo.save(task);
+        changeJournalRepo.save(newChangeJournal);
+        return ResponseEntity.ok("Успех");
+
     }
 
 

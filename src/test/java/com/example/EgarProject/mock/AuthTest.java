@@ -1,4 +1,4 @@
-package com.example.EgarProject;
+package com.example.EgarProject.mock;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

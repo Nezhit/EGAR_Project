@@ -16,6 +16,7 @@ import com.example.EgarProject.pojo.SignupRequest;
 import com.example.EgarProject.repos.RoleRepo;
 import com.example.EgarProject.repos.UserRepo;
 import com.example.EgarProject.services.UserDetailsImpl;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -26,6 +27,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -76,8 +79,17 @@ public class AuthController {
     }
     @Transactional
     @PostMapping("/api/auth/signup")
-    public synchronized ResponseEntity<?> registerUser(@RequestBody SignupRequest signupRequest) {
-
+    public synchronized ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signupRequest, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            // Обработка ошибок валидации
+            StringBuilder errorMessage = new StringBuilder("Validation failed. Errors: ");
+            for (FieldError error : bindingResult.getFieldErrors()) {
+                errorMessage.append(error.getDefaultMessage()).append("; ");
+            }
+            return ResponseEntity
+                    .badRequest()
+                    .body(new MessageResponse(errorMessage.toString()));
+        }
         if (userRespository.existsByUsername(signupRequest.getUsername())) {
             return ResponseEntity
                     .badRequest()

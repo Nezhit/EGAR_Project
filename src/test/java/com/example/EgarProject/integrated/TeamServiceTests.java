@@ -1,4 +1,4 @@
-package com.example.EgarProject;
+package com.example.EgarProject.integrated;
 
 import com.example.EgarProject.models.User;
 import com.example.EgarProject.pojo.TaskCreationRequest;
@@ -104,7 +104,7 @@ public class TeamServiceTests {
     @Sql(scripts = "classpath:testdata.sql", config = @SqlConfig(transactionMode = SqlConfig.TransactionMode.ISOLATED))
 
     @DirtiesContext
-    public void usik(){
+    public void usik(){//переписать на team логику
         TaskCreationRequest taskCreationRequest=new TaskCreationRequest();
         taskCreationRequest.setDeadline(LocalDateTime.now());
         taskCreationRequest.setDescription("Dast");

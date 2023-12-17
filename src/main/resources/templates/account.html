@@ -43,16 +43,16 @@
 <!-- Добавляем чекбоксы для каждого уровня сложности -->
 <div>
     <label>
-        <input type="checkbox" id="easyCheckbox" onchange="toggleComplexity('EASY')"> Easy
+        <input type="checkbox" id="easyCheckbox" > Easy
     </label>
     <label>
-        <input type="checkbox" id="mediumCheckbox" onchange="toggleComplexity('MEDIUM')"> Medium
+        <input type="checkbox" id="mediumCheckbox" > Medium
     </label>
     <label>
-        <input type="checkbox" id="hardCheckbox" onchange="toggleComplexity('HARD')"> Hard
+        <input type="checkbox" id="hardCheckbox" > Hard
     </label>
     <label>
-        <input type="checkbox" id="epicCheckbox" onchange="toggleComplexity('EPIC')"> Epic
+        <input type="checkbox" id="epicCheckbox" > Epic
     </label>
 </div>
 
@@ -74,6 +74,42 @@
 
 <script>
 document.addEventListener("DOMContentLoaded", function () {
+  function handleCheckboxChange() {
+        // Находим все элементы с классом .draggable
+        var draggableElements = document.querySelectorAll(".draggable");
+
+        // Перебираем все найденные элементы
+        draggableElements.forEach(function (element) {
+            // Находим значение complexity для текущего элемента
+            var taskComplexity = element.querySelector("#complexity").textContent;
+
+            // Проверяем, соответствует ли complexity одному из состояний чекбоксов
+            var easyCheckbox = document.getElementById("easyCheckbox").checked;
+            var mediumCheckbox = document.getElementById("mediumCheckbox").checked;
+            var hardCheckbox = document.getElementById("hardCheckbox").checked;
+            var epicCheckbox = document.getElementById("epicCheckbox").checked;
+
+            // Проверяем условия отображения элемента
+            if ((easyCheckbox && taskComplexity === "EASY") ||
+                (mediumCheckbox && taskComplexity === "MEDIUM") ||
+                (hardCheckbox && taskComplexity === "HARD") ||
+                (epicCheckbox && taskComplexity === "EPIC")) {
+                // Отображаем элемент
+                element.style.display = "block";
+            } else {
+                // Скрываем элемент
+                element.style.display = "none";
+            }
+        });
+    }
+
+    // Обработчики изменения состояния чекбоксов
+    document.getElementById("easyCheckbox").addEventListener("change", handleCheckboxChange);
+    document.getElementById("mediumCheckbox").addEventListener("change", handleCheckboxChange);
+    document.getElementById("hardCheckbox").addEventListener("change", handleCheckboxChange);
+    document.getElementById("epicCheckbox").addEventListener("change", handleCheckboxChange);
+
+
     var draggedItem = null;
     var modal = document.getElementById("myModal");
     var submitButton = document.getElementById("submitButton");

@@ -1,4 +1,4 @@
-package com.example.EgarProject;
+package com.example.EgarProject.integrated;
 
 import com.example.EgarProject.repos.ChangeJournalRepo;
 import com.example.EgarProject.repos.TaskRepo;

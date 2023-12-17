@@ -28,6 +28,27 @@ function generateReport() {
         }
 
 document.addEventListener('DOMContentLoaded', function() {
+    var tables = document.querySelectorAll('.table');
+        tables.forEach(function (table) {
+            // Получаем последнюю строку в таблице
+            var lastRow = table.querySelector('tbody tr:last-child');
+            var firstRow = table.querySelector('tbody tr:first-child');
+            // Получаем последнюю ячейку в последней строке
+            var lastCell = lastRow.querySelector('td:last-child');
+            var firstCell = lastRow.querySelector('td:first-child');
+            // Проверяем, является ли значение в ячейке "DONE"
+            if (lastCell.textContent.trim() === 'DONE') {
+                // Добавляем кнопку после таблицы
+                var button = document.createElement('button');
+                button.textContent = 'Отправить POST запрос';
+                button.onclick = function() {
+            openModal(firstCell.textContent.trim());
+        };
+                table.parentNode.insertBefore(button, table.nextSibling);
+            }
+        });
+
+
     window.uploadFile = function() {
         const fileInput = document.getElementById('fileInput');
     const file = fileInput.files[0];
@@ -73,7 +94,50 @@ function getCookie(name) {
 }
     };
 });
+ function openModal(id) {
+    document.getElementById('idofcond').textContent = 'ID: ' + id;
+  document.getElementById('myModal').style.display = 'block';
+}
 
+function closeModal() {
+  document.getElementById('myModal').style.display = 'none';
+}
+
+
+// Функция для отправки POST запроса из формы
+function submitForm() {
+  var textValue = document.getElementById('inputText').value;
+  var conditionValue = document.getElementById('condit').value;
+  var idValue = document.getElementById('idofcond').textContent.replace('ID: ', ''); // Получаем значение id
+    var accessToken = getCookie("Authorization");
+       // Функция для чтения cookie по имени
+function getCookie(name) {
+    var value = "; " + document.cookie;
+    var parts = value.split("; " + name + "=");
+    if (parts.length === 2) {
+        return parts.pop().split(";").shift();
+    }
+}
+  // Ваш код для отправки POST запроса
+  fetch('/teamleadpanel/critisize', {
+      method: 'POST',
+      headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + accessToken
+      },
+      body: JSON.stringify({ changeText: textValue, taskCon: conditionValue, id: idValue }), // Передаем значения полей и id
+  })
+  .then(function(response) {
+      // Обработка успешного ответа
+      alert(response);
+      console.log(response);
+      closeModal(); // Закрыть модальное окно после успешной отправки
+  })
+  .catch(function(error) {
+      // Обработка ошибки
+      console.error(error);
+  });
+}
 </script>
     <!-- Подключение Bootstrap -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
@@ -102,10 +166,69 @@ function getCookie(name) {
         h2, h3, h4 {
             margin-top: 20px;
         }
+        /* Стили для модального окна */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgb(0,0,0);
+  background-color: rgba(0,0,0,0.4);
+  padding-top: 60px;
+}
+
+.modal-content {
+  background-color: #fefefe;
+  margin: 5% auto;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 80%;
+}
+
+.close {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
+}
+
     </style>
 
 </head>
 <body>
+<div id="myModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal()">&times;</span>
+        <h2>Введите данные</h2>
+        <form id="postDataForm">
+            <span id="idofcond"></span>
+            <label for="inputText">Текст:</label>
+            <input type="text" id="inputText" name="inputText" required>
+            <label for="condit">Condition:</label>
+            <select id="condit" name="cond">
+                <option value="TODO">TODO</option>
+                <option value="IN_PROGRESS">IN_PROGRESS</option>
+                <option value="TESTING">TESTING</option>
+                <option value="DONE">DONE</option>
+                <option value="ACCEPTED">ACCEPTED</option>
+            </select><br>
+            <!-- Добавьте выпадающий список здесь -->
+
+            <button type="button" onclick="submitForm()">Отправить POST запрос</button>
+        </form>
+    </div>
+</div>
 <div class="container">
     <h2>Team Lead Panel</h2>
 
@@ -162,6 +285,7 @@ function getCookie(name) {
                     <th>Change ID</th>
                     <th>Change Text</th>
                     <th>Change Time</th>
+                    <th>Status</th>
                     <!-- Добавить другие заголовки, если необходимо -->
                 </tr>
                 </thead>
@@ -170,11 +294,16 @@ function getCookie(name) {
                     <td th:text="${change.id}"></td>
                     <td th:text="${change.changeText}"></td>
                     <td th:text="${change.changeTime}"></td>
+                    <td id="cond" th:text="${change.getTask().getTaskCon().stream().findFirst().orElse(null).getCondition()}"></td>
                     <!-- Добавить другие поля, если необходимо -->
                 </tr>
                 </tbody>
             </table>
+
+
         </div>
+        </div>
+
     </div>
 </div>
 
